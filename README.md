@@ -28,7 +28,7 @@ Want to build something?
 → Click **⚙ System Architect Center** → Core Training tab  
 → Paste JSON rules → **PROCESS STREAM**
 
-Full documentation → [docs/NeoTherion.md](docs/NeoTherion.md)
+Full documentation → [/NeoTherion.md](/NeoTherion.md)
 
 ## Current Status (January 2026)
 
