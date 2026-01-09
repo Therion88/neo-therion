@@ -30,6 +30,8 @@ Want to build something?
 
 Full documentation → [docs/NeoTherion.md](docs/NeoTherion.md)
 
+<a href="https://github.com/Therion88/neo-therion/blob/main/NeoTherion.html" target="_blank">Try out the online demo here.</a>
+
 ## Current Status (January 2026)
 
 This is the initial public release — fully functional and ready for use.
