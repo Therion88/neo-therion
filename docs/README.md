@@ -134,6 +134,6 @@ Built with:
 **License:** MIT  
 Modify, extend, share freely — attribution appreciated but not required.
 
-> *“Do what thou wilt shall be the whole of the Law.”*
+*“Do what thou wilt shall be the whole of the Law.”*
 
 ```
