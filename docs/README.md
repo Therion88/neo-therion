@@ -3,7 +3,7 @@
 **Offline-first AI engine running entirely in your browser**  
 Create adaptive chatbots, companions, text adventures, knowledge bases, automation tools — with semantic understanding, persistent memory, state machines, and zero server dependency.
 
-![NeoTherion]([https://github.com/Therion88/neo-therion/blob/main/NeoTherion.png]) 
+![NeoTherion](https://github.com/Therion88/neo-therion/blob/main/NeoTherion.png) 
 
 ## What makes NeoTherion special?
 
