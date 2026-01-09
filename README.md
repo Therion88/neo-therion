@@ -30,7 +30,7 @@ Want to build something?
 
 Full documentation → [docs/NeoTherion.md](docs/NeoTherion.md)
 
-Try the online demo → <a href="https://github.com/Therion88/neo-therion/blob/main/NeoTherion.html" target="_blank">NeoTherion Live</a>
+Try the online demo → <a href="https//:neo-therion.github.io)" target="_blank">NeoTherion Live</a>
 
 ## Current Status (January 2026)
 
