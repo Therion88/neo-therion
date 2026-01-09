@@ -28,7 +28,7 @@ Want to build something?
 → Click **⚙ System Architect Center** → Core Training tab  
 → Paste JSON rules → **PROCESS STREAM**
 
-Full documentation → [NeoTherion.md](/NeoTherion.md)
+Full documentation → [docs/NeoTherion.md](docs/NeoTherion.md)
 
 ## Current Status (January 2026)
 
@@ -46,6 +46,52 @@ This is the initial public release — fully functional and ready for use.
 **Scaling & customization notes:**
 - Vector search uses centroids by default — performs well for typical use cases (dozens to several hundred rules). For very large rule sets, scripting (e.g. VP-Tree) can be used to optimize.
 - Dream Mode delivers lightweight, creative, context-guided responses — tunable and extensible via scripts.
+- Primarily English-focused (Compromise NLP), with scripting available for custom/multilingual extensions.
+
+## Folder Structure
+
+```
+NeoTherion/
+├── NeoTherion.html           ← The single-file application (this is what you open)
+├── README.md                 ← You are here
+└── docs/
+    └── NeoTherion.md         ← Complete documentation + 12 working examples
+
+```
+
+## How to Get Started Building
+
+Three main approaches (all explained in the docs):
+
+1. **Manual precision** – Build rules one by one in Core Training
+2. **Quick commit / Auto-Teach** – Let the bot dream → instantly turn dreams into rules
+3. **Mass import** – Paste JSON (hand-written, LLM-generated, or conversation logs)
+
+## Contributing
+
+Love offline AI, privacy tech, text games, or mesh networking?  
+You're very welcome to:
+
+- ⭐ Star the repo
+- 🐛 Report issues
+- Submit PRs (examples, bug fixes, script accelerators, better indexing…)
+- Share your own personas,  rule packs, data packs or use cases. 
+
+## Credits
+
+Developed on:
+- DW Pad6S Pro (2016 tablet, MT6755, Mali-T860, Android 8.1)
+- Using Markor (text editor) + mobile code IDE
+
+Built with:
+- Dexie.js • Compromise • Transformers.js • Marked.js
+
+**License:** MIT  
+Modify, extend, share freely — attribution appreciated but not required.
+
+> *“Do what thou wilt shall be the whole of the Law.”*
+
+```- Dream Mode delivers lightweight, creative, context-guided responses — tunable and extensible via scripts.
 - Primarily English-focused (Compromise NLP), with scripting available for custom/multilingual extensions.
 
 ## Folder Structure
