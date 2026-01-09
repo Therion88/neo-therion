@@ -54,8 +54,7 @@ This is the initial public release — fully functional and ready for use.
 NeoTherion/
 ├── NeoTherion.html           ← The single-file application (this is what you open)
 ├── README.md                 ← You are here
-└── docs/
-    └── NeoTherion.md         ← Complete documentation + 12 working examples
+└── NeoTherion.md             ← Complete documentation + 12 working examples
 
 ```
 
