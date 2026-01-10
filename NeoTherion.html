@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>NeoTherion</title>
   
+  <!-- EXTERNAL LIBRARIES -->
   <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
   <script src="https://unpkg.com/compromise"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   
   <style>
     :root {
@@ -37,6 +37,7 @@
       scrollbar-color: var(--accent) var(--bg);
     }
 
+    /* CUSTOM SCROLLBARS */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { 
@@ -58,6 +59,7 @@
         radial-gradient(circle at 50% 50%, rgba(20, 10, 10, 1) 0%, rgba(5, 5, 7, 1) 100%);
     }
 
+    /* SYSTEM INITIALIZATION OVERLAY */
     #system-loader {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: var(--bg); z-index: 10000;
@@ -84,6 +86,7 @@
       text-shadow: 0 0 8px var(--accent-glow);
     }
 
+    /* HEADER ARCHITECTURE */
     header { 
       padding: 16px 24px; 
       border-bottom: 2px solid var(--border); 
@@ -140,6 +143,7 @@
     }
     .toggle-history-btn:hover { color: var(--accent); border-color: var(--accent); background: rgba(255,62,62,0.05); }
     
+    /* CHAT STREAM */
     #chat-window { 
       flex: 1; 
       overflow-y: auto; 
@@ -150,6 +154,7 @@
       scroll-behavior: smooth; 
     }
     
+    /* TYPING DYNAMICS */
     .typing-bubble {
       align-self: flex-start; 
       background: var(--bot-msg); 
@@ -163,6 +168,7 @@
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typing-pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
 
+    /* MESSAGE BUBBLES */
     .bubble { 
       padding: 14px 18px; 
       border-radius: 18px; 
@@ -174,13 +180,6 @@
       word-wrap: break-word;
       box-shadow: 0 2px 15px rgba(0,0,0,0.2);
     }
-    .bubble code { background: #000; padding: 2px 4px; border-radius: 4px; font-family: monospace; color: var(--neo); }
-    .bubble pre { background: #000; padding: 10px; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border); margin: 10px 0; }
-    .bubble blockquote { border-left: 4px solid var(--accent); margin: 10px 0; padding-left: 15px; color: var(--subtext); }
-    .bubble table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 13px; }
-    .bubble th, .bubble td { border: 1px solid var(--border); padding: 8px; text-align: left; }
-    .bubble th { background: rgba(255,62,62,0.1); }
-
     @keyframes bubbleAppear { from { opacity: 0; transform: translateY(15px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
     
     .user { 
@@ -236,6 +235,7 @@
     }
     .bubble.bot[data-state="Dreaming"] .state-tag { color: var(--dream); }
 
+    /* TEACHING PROMPTS */
     .teach-prompt { 
       align-self: center; 
       padding: 15px 20px; 
@@ -269,6 +269,7 @@
         margin: 20px 0; opacity: 0.6; letter-spacing: 2px; text-transform: uppercase;
     }
 
+    /* INPUT DOCK */
     .dock { 
       padding: 20px; 
       background: var(--panel); 
@@ -338,6 +339,7 @@
     .btn-outline:hover { background: rgba(255, 62, 62, 0.1); }
     .btn-danger { background: var(--err); color: white; }
 
+    /* SYSTEM CONTROL CENTER (LAB) */
     #lab { 
       position: fixed; bottom: 130px; left: 15px; right: 15px; 
       height: 75dvh; background: var(--panel); border: 1px solid var(--border); 
@@ -361,11 +363,12 @@
     .tab-content { flex: 1; overflow-y: auto; padding: 20px; display: none; }
     .tab-content.active { display: block; }
 
+    /* CARDS AND UI COMPONENTS */
     .card { background: #0d0d10; padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
     .field-label { font-size: 10px; color: var(--accent); margin-bottom: 10px; display: block; text-transform: uppercase; letter-spacing: 2px; font-weight: 900; }
     .hint { font-size: 10px; color: var(--neo); margin-bottom: 12px; display: block; line-height: 1.5; opacity: 0.8; border-left: 2px solid var(--border); padding-left: 10px; }
     
-    .multi-line { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 14px; margin-bottom: 12px; line-height: 1.5; outline: none; resize: none; }
+    .multi-line { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 14px; margin-bottom: 12px; line-height: 1.5; outline: none; resize: vertical; }
     .multi-line:focus { border-color: var(--neo); }
     
     .checkbox-grid { 
@@ -433,6 +436,7 @@
 </head>
 <body>
 
+<!-- SYSTEM LOADING SCREEN -->
 <div id="system-loader">
   <div class="loader-content">
     <div class="neotherion-ring"></div>
@@ -440,6 +444,7 @@
   </div>
 </div>
 
+<!-- TOP INTERFACE -->
 <header>
   <div class="brand">
     NEO <span>THERION</span>
@@ -450,8 +455,10 @@
   <div id="mode-display" class="status-chip">INITIALIZING</div>
 </header>
 
+<!-- MAIN CHAT INTERFACE -->
 <main id="chat-window"></main>
 
+<!-- COMMUNICATION DOCK -->
 <div class="dock">
   <div class="input-row">
     <textarea id="user-input" placeholder="Enter command or whisper..."></textarea>
@@ -460,6 +467,7 @@
   <button id="toggle-lab-btn" class="btn btn-outline" onclick="toggleLab()">⚙ SYSTEM ARCHITECT CENTER</button>
 </div>
 
+<!-- THE LAB (SYSTEM CONTROL CENTER) -->
 <section id="lab">
   <nav class="lab-tabs">
     <button class="tab-btn active" onclick="switchTab(event, 'tab-train')">Core Training</button>
@@ -468,29 +476,26 @@
     <button class="tab-btn" onclick="switchTab(event, 'tab-debug')">Debug</button>
   </nav>
 
+  <!-- TRAINING PANEL -->
   <div id="tab-train" class="tab-content active">
     <div class="card" style="border-left: 4px solid var(--accent);">
       <span class="field-label">1. Neural Response Logic</span>
-      <span class="hint">Define output variants. Use weights to control randomness. Supports Markdown.</span>
+      <span class="hint">Define output variants. Use weights to control randomness. Dynamic vars: (status), (time), (day), (var_name).</span>
       <div id="response-grid" class="checkbox-grid"></div>
       <button onclick="addResponseItem()" class="btn btn-outline" style="margin-top:8px; height:42px;">+ ADD RESPONSE VARIANT</button>
       
       <div class="preview-label">REAL-TIME INJECTION PREVIEW:</div>
       <div id="response-preview" class="preview-box">Awaiting neural input...</div>
-
-      <span class="field-label">2. Prompt Chaining</span>
-      <span class="hint">Auto-send this message to the system after this rule fires.</span>
-      <input type="text" id="train-chain" class="multi-line" style="height:45px;" placeholder="e.g. check status">
       
-      <span class="field-label">3. Destination States</span>
+      <span class="field-label">2. Destination States</span>
       <span class="hint">Select states to transition into upon successful match.</span>
       <div id="next-state-grid" class="checkbox-grid"></div>
       
-      <span class="field-label">4. Activation Triggers</span>
+      <span class="field-label">3. Activation Triggers</span>
       <span class="hint">Prefix '+' for relational follow-ups. Use [capture] for variable extraction.</span>
       <textarea id="train-trigger" class="multi-line" placeholder="Enter trigger patterns..."></textarea>
 
-      <span class="field-label">5. Contextual Filter</span>
+      <span class="field-label">4. Contextual Filter</span>
       <span class="hint">Only activate this rule if NeoTherion is currently in these states.</span>
       <div id="filter-state-grid" class="checkbox-grid"></div>
       
@@ -504,6 +509,7 @@
     </div>
   </div>
 
+  <!-- RULES PANEL -->
   <div id="tab-rules" class="tab-content">
     <div class="card">
       <span class="field-label">Active Rule Library (<span id="rule-count">0</span>)</span>
@@ -511,6 +517,7 @@
     </div>
   </div>
 
+  <!-- ARCHITECT PANEL -->
   <div id="tab-states" class="tab-content">
     <div class="card">
       <div class="toggle-row">
@@ -520,24 +527,14 @@
           <span class="slider-toggle" style="opacity: 0.8;"></span>
         </label>
       </div>
-      <span class="hint">⚠ DANGER: Enabling this allows the engine to execute &lt;script&gt; tags within bot responses.</span>
-    </div>
-
-    <div class="card">
-      <div class="toggle-row">
-        <span class="field-label" style="margin:0;">Vector Threading (Optimization)</span>
-        <label class="switch">
-          <input type="checkbox" id="vector-threading-toggle" onchange="toggleVectorThreading()">
-          <span class="slider-toggle"></span>
-        </label>
-      </div>
-      <span class="hint">Offloads heavy similarity calculations to a background worker to prevent UI lag.</span>
+      <span class="hint">⚠ DANGER: Enabling this allows the engine to execute &lt;script&gt; tags within bot responses. Use only for trusted logic.</span>
     </div>
 
     <div class="card">
         <span class="field-label">Linguistic Intent Mapper</span>
         <div id="intent-neotherion-container" style="max-height: 200px; overflow-y: auto; margin-bottom: 12px;"></div>
         <button onclick="createIntentRow()" class="btn btn-outline" style="height: 38px; font-size: 11px;">+ MAP NEW INTENT</button>
+        <span class="hint">Link NLP patterns to semantic labels (e.g., 'hello|hi' -> 'greet').</span>
     </div>
 
     <div class="card">
@@ -548,6 +545,7 @@
           <span class="slider-toggle"></span>
         </label>
       </div>
+      <span class="hint">Unmatched inputs will prompt for manual training.</span>
     </div>
 
     <div class="card">
@@ -558,6 +556,7 @@
           <span class="slider-toggle"></span>
         </label>
       </div>
+      <span class="hint">Show state shift path (e.g., Neutral -> Aggressive) in chat.</span>
     </div>
 
     <div class="card">
@@ -570,12 +569,14 @@
         </div>
         <input type="range" id="dream-intensity-slider" min="10" max="80" value="30" oninput="updateIntensity(this.value)">
       </div>
+      <span class="hint">Controls the length and randomness of fallback "Dream" generations.</span>
     </div>
 
     <div class="card">
       <span class="field-label">Persistent Variable Matrix</span>
       <div id="variable-neotherion-container" style="max-height: 200px; overflow-y: auto; margin-bottom: 12px;"></div>
       <button onclick="createVariableRow()" class="btn btn-outline" style="height: 38px; font-size: 11px;">+ REGISTER NEW VARIABLE</button>
+      <div style="font-size: 10px; color: var(--warning); margin-top: 10px;">⚠ Variable keys must be unique. Saves on focus loss.</div>
     </div>
 
     <div class="card">
@@ -601,6 +602,7 @@
     </div>
   </div>
 
+  <!-- DEBUG PANEL -->
   <div id="tab-debug" class="tab-content">
     <div class="card">
       <span class="field-label">Real-time State Analysis</span>
@@ -643,46 +645,19 @@
   </div>
 </section>
 
+<!-- NEOTHERION NEURAL ENGINE SCRIPTS -->
 <script type="module">
+  // Using Xenova Transformers for local vectorization
   import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0';
 
+  // Environment Config
   env.allowLocalModels = false;
   let embeddingPipe = null;
-  let vectorWorker = null;
-  let vectorThreadingEnabled = false;
-
-  const db = new Dexie("NeoTherion");
-  db.version(5).stores({
-    rules: '++id, *triggers, *requiredStates, chainPrompt',
-    history: '++id, role, timestamp, ruleId, vector',
-    config: 'key',
-    variables: 'key',
-    intents: '++id, label, pattern'
-  }).upgrade(tx => {});
-
-  const workerCode = `
-    self.onmessage = function(e) {
-      const { type, uVector, rules } = e.data;
-      if (type === 'search') {
-        const results = rules.map(rule => {
-          if (!rule.vector || !uVector) return { id: rule.id, score: 0 };
-          let dot = 0, mA = 0, mB = 0;
-          for (let i = 0; i < uVector.length; i++) {
-            dot += uVector[i] * rule.vector[i];
-            mA += uVector[i] * uVector[i];
-            mB += rule.vector[i] * rule.vector[i];
-          }
-          const denom = Math.sqrt(mA) * Math.sqrt(mB);
-          return { id: rule.id, score: denom === 0 ? 0 : dot / denom };
-        });
-        self.postMessage(results);
-      }
-    };
-  `;
-
-  const blob = new Blob([workerCode], { type: 'application/javascript' });
-  vectorWorker = new Worker(URL.createObjectURL(blob));
-
+  
+  /**
+   * Executive Script Execution Logic
+   * Manually reapplies scripts found in dynamically injected bot responses
+   */
   const executeScripts = (element) => {
     element.querySelectorAll("script").forEach(oldScript => {
       const newScript = document.createElement("script");
@@ -691,12 +666,19 @@
       oldScript.parentNode.replaceChild(newScript, oldScript);
     });
   };
-
+  
+  /**
+   * Neural Core Initialization
+   * Loads the MiniLM model for semantic vector similarity
+   */
   async function initNeuralCore() {
     if (!embeddingPipe) {
         const loaderMsg = document.getElementById('loader-msg');
         if (loaderMsg) loaderMsg.textContent = "SYNCHRONIZING NEURAL LAYERS (~30MB)...";
+        
+        // Load the feature extraction pipeline
         embeddingPipe = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+        
         if (loaderMsg) loaderMsg.textContent = "NEURAL SYNC COMPLETE ✓";
         const loader = document.getElementById('system-loader');
         if (loader) {
@@ -706,6 +688,9 @@
     }
   }
 
+  /**
+   * Generates a normalized vector for a given string
+   */
   async function getVector(text) {
       if (!embeddingPipe) await initNeuralCore();
       if (!text || !text.trim()) return null;
@@ -713,26 +698,39 @@
           const result = await embeddingPipe(text, { pooling: 'mean', normalize: true });
           return Array.from(result.data);
       } catch (e) { 
+          console.error("Vector Core Error:", e); 
           return null; 
       }
   }
 
+  /**
+   * Computes the average vector for a collection of triggers (Centroid)
+   */
   async function getAverageVector(texts) {
       const validTexts = texts.filter(t => t && t.trim());
       if (validTexts.length === 0) return null;
       if (validTexts.length === 1) return await getVector(validTexts[0]);
+
       const vectors = (await Promise.all(validTexts.map(getVector))).filter(v => v !== null);
       if (vectors.length === 0) return null;
+
       const dim = vectors[0].length;
       const avg = new Array(dim).fill(0);
       for (const vec of vectors) {
-          for (let i = 0; i < dim; i++) avg[i] += vec[i];
+          for (let i = 0; i < dim; i++) {
+              avg[i] += vec[i];
+          }
       }
       const mag = Math.sqrt(avg.reduce((sum, val) => sum + val * val, 0));
-      if (mag > 0) { for (let i = 0; i < dim; i++) avg[i] /= mag; }
+      if (mag > 0) {
+          for (let i = 0; i < dim; i++) avg[i] /= mag;
+      }
       return avg;
   }
 
+  /**
+   * Cosine Similarity Score (0.0 to 1.0)
+   */
   function cosineSimilarity(a, b) {
       if (!a || !b || a.length !== b.length) return 0;
       let dot = 0, mA = 0, mB = 0;
@@ -745,22 +743,51 @@
       return denom === 0 ? 0 : dot / denom;
   }
   
+  /**
+   * Background Vector Preloader
+   * Ensures all rules have computed vectors for semantic matching
+   */
   async function preloadVectors() {
     if (!embeddingPipe) await initNeuralCore();
     const rulesToUpdate = await db.rules.filter(r => (!r.vector) && r.triggers && r.triggers.length > 0).toArray();
+    
     if (rulesToUpdate.length > 0) {
+        console.log(`Preloading ${rulesToUpdate.length} vectors...`);
         const statusEl = document.getElementById('preload-status');
-        if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = `VECTORS SYNCING...`; }
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.textContent = `VECTORS SYNCING...`;
+        }
+        
         for (let i = 0; i < rulesToUpdate.length; i++) {
              const rule = rulesToUpdate[i];
              if (statusEl) statusEl.textContent = `SYNCING: ${i + 1}/${rulesToUpdate.length}`;
              const vec = await getAverageVector(rule.triggers);
              if (vec) await db.rules.update(rule.id, { vector: vec });
         }
-        if (statusEl) { statusEl.textContent = 'NEURAL SYNCED'; setTimeout(() => { statusEl.style.display = 'none'; }, 2000); }
+        
+        if (statusEl) {
+          statusEl.textContent = 'NEURAL SYNCED';
+          setTimeout(() => { statusEl.style.display = 'none'; }, 2000);
+        }
     }
   }
 
+  // Database Definition
+  const db = new Dexie("NeoTherion");
+  db.version(4).stores({
+    rules: '++id, *triggers, *requiredStates',
+    history: '++id, role, timestamp, ruleId, vector',
+    config: 'key',
+    variables: 'key',
+    intents: '++id, label, pattern'
+  }).upgrade(tx => {
+      return tx.history.toCollection().modify(h => {
+          h.vector = h.vector || null;
+      });
+  });
+
+  // System State Variables
   const MAINTAIN = "[Maintain State]";
   let currentStatus = "Neutral";
   let autoTeachEnabled = true;
@@ -770,27 +797,58 @@
   let thresholds = { regex: 1.0, vector: 0.75, fuzzy: 0.65 };
   let editingRuleId = null;
 
+  /**
+   * Semantic History Retrieval (RAG-lite)
+   */
   async function getRelevantHistory(queryVector, limit = 5) {
       if (!queryVector) return [];
       const history = await db.history.where('role').equals('user').reverse().limit(300).toArray();
-      const scored = history.filter(h => h.vector).map(h => ({ text: h.text, score: cosineSimilarity(queryVector, h.vector) })).filter(h => h.score > 0.6).sort((a, b) => b.score - a.score).slice(0, limit);
+      const scored = history
+        .filter(h => h.vector)
+        .map(h => ({
+          text: h.text,
+          score: cosineSimilarity(queryVector, h.vector)
+        }))
+        .filter(h => h.score > 0.6)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limit);
       return scored.map(s => s.text);
   }
 
+  /**
+   * NLP Pre-processing
+   */
   async function processWithNLP(input) {
       const doc = nlp(input);
       let intent = 'unknown';
+
       const mappedIntents = await db.intents.toArray();
       for (const item of mappedIntents) {
-          try { if (doc.match(item.pattern).found) { intent = item.label; break; } } catch(e) {}
+          try {
+              if (doc.match(item.pattern).found) {
+                  intent = item.label;
+                  break;
+              }
+          } catch(e) { console.warn(`Intent Pattern Error [${item.label}]: ${e.message}`); }
       }
+      
       const entities = {};
       const nameMatch = doc.people().first().text();
       if (nameMatch) entities.user = nameMatch;
-      const normalizedText = doc.normalize({ whitespace: true, punctuation: true, case: true, contractions: true }).out('text');
+      
+      const normalizedText = doc.normalize({ 
+        whitespace: true, 
+        punctuation: true, 
+        case: true, 
+        contractions: true 
+      }).out('text');
+      
       return { intent, entities, normalizedText };
   }
 
+  /**
+   * NeoTherion Logic Engine
+   */
   const NeoTherion = {
     async getStatus() {
       const cfg = await db.config.get('currentStatus');
@@ -798,6 +856,7 @@
       if (cfg && all.find(s => s.name === cfg.value)) return cfg.value;
       return all.length > 0 ? all[0].name : "Neutral";
     },
+
     async setStatus(val) {
       const all = await this.getAllStatuses();
       if (!all.find(s => s.name === val)) val = all[0]?.name || "Neutral";
@@ -808,23 +867,32 @@
       if (disp) disp.innerText = val;
       return { oldStatus, newStatus: val };
     },
+
     async getAllStatuses() {
       const cfg = await db.config.get('allStatuses');
-      return cfg ? cfg.value : [{name: 'Positive', parent: null}, {name: 'Neutral', parent: null}, {name: 'Negative', parent: null}];
+      return cfg ? cfg.value : [
+        {name: 'Positive', parent: null}, 
+        {name: 'Neutral', parent: null}, 
+        {name: 'Negative', parent: null}
+      ];
     },
+
     async getStateHierarchy(stateName) {
       const all = await this.getAllStatuses();
       const hierarchy = [stateName];
       let current = all.find(s => s.name === stateName);
       let visited = new Set([stateName]);
+      
       while (current && current.parent) {
         if (visited.has(current.parent)) break;
         visited.add(current.parent);
         current = all.find(s => s.name === current.parent);
         if (current) hierarchy.unshift(current.name);
       }
+      
       return hierarchy;
     },
+
     getLevenshtein(a, b) {
       const matrix = Array.from({ length: a.length + 1 }, () => []);
       for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
@@ -832,92 +900,176 @@
       for (let i = 1; i <= a.length; i++) {
         for (let j = 1; j <= b.length; j++) {
           const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-          matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j] + 1, 
+            matrix[i][j - 1] + 1, 
+            matrix[i - 1][j - 1] + cost
+          );
         }
       }
       return matrix[a.length][b.length];
     },
+
     async findResponse(uText, uVector = null) {
       const allRules = await db.rules.toArray();
       const lastEntry = (await db.history.orderBy('id').reverse().limit(1).toArray())[0];
       const currentHierarchy = await this.getStateHierarchy(currentStatus);
+
       let best = null, topScore = 0, captures = {};
       let matchMethod = 'none';
       let debugLog = [];
-      let vectorScores = [];
-
-      if (vectorThreadingEnabled && uVector) {
-        debugLog.push("⚙ Processing vector similarity in background thread...");
-        vectorScores = await new Promise(resolve => {
-            vectorWorker.onmessage = e => resolve(e.data);
-            vectorWorker.postMessage({ type: 'search', uVector, rules: allRules });
-        });
-      }
-
+      
       for (const rule of allRules) {
+        // State Filter Logic
         if (rule.requiredStates && rule.requiredStates.length > 0) {
           const stateMatch = rule.requiredStates.some(req => currentHierarchy.includes(req));
-          if (!stateMatch) continue;
+          if (!stateMatch) {
+            debugLog.push(`⊘ Rule ${rule.id} skipped (Current state path ${currentHierarchy.join('/')} lacks ${rule.requiredStates.join('/')})`);
+            continue;
+          } else {
+            debugLog.push(`✓ Rule ${rule.id} matches current state context`);
+          }
         }
+
         let ruleMaxScore = 0;
         let ruleCaptures = {};
         let ruleMethod = 'none';
+
+        // 1. Regex/Pattern Matching
         for (let pattern of rule.triggers || []) {
           let isRelational = pattern.startsWith('+');
           let cleanPattern = isRelational ? pattern.substring(1).trim() : pattern;
+          
           const regexPattern = cleanPattern.replace(/\[(\w+)\]/g, '(.+)');
           const regex = new RegExp(`^${regexPattern}$`, 'i');
           const match = uText.match(regex);
+
           if (match) {
-            ruleMaxScore = thresholds.regex; ruleMethod = 'regex';
+            ruleMaxScore = thresholds.regex;
+            ruleMethod = 'regex';
             const keys = [...cleanPattern.matchAll(/\[(\w+)\]/g)].map(m => m[1]);
             keys.forEach((key, i) => ruleCaptures[key] = match[i + 1]);
-            if (isRelational && lastEntry) ruleMaxScore += 0.15;
+            debugLog.push(`✓ Rule ${rule.id} REGEX MATCH (${ruleMaxScore.toFixed(2)})`);
+            
+            if (isRelational && lastEntry) {
+              ruleMaxScore += 0.15;
+              debugLog.push(`↻ Rule ${rule.id} Relational Context Bonus (+0.15)`);
+            }
             break; 
           }
         }
+
         if (ruleMaxScore >= thresholds.regex) {
-          if (ruleMaxScore > topScore) { topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; }
+          if (ruleMaxScore > topScore) {
+            topScore = ruleMaxScore;
+            best = rule;
+            captures = ruleCaptures;
+            matchMethod = ruleMethod;
+          }
           continue; 
         }
+
+        // 2. Semantic/Vector Matching
         if (rule.vector) {
-          const threadScore = vectorScores.find(s => s.id === rule.id)?.score;
-          const semanticScore = threadScore !== undefined ? threadScore : (uVector ? cosineSimilarity(uVector, rule.vector) : 0);
-          if (semanticScore > ruleMaxScore) { ruleMaxScore = semanticScore; ruleMethod = 'vector'; }
+          if (!uVector && embeddingPipe) {
+            try { 
+              uVector = await getVector(uText);
+            } catch(e) {
+              debugLog.push(`✗ Vector computation fail: ${e.message}`);
+            }
+          }
+          
+          if (uVector) {
+            const semanticScore = cosineSimilarity(uVector, rule.vector);
+            if (semanticScore > ruleMaxScore) {
+              ruleMaxScore = semanticScore;
+              ruleMethod = 'vector';
+              debugLog.push(`✓ Rule ${rule.id} VECTOR SIMILARITY (${semanticScore.toFixed(2)})`);
+            }
+          }
         }
+
         if (ruleMaxScore >= thresholds.vector) {
-          if (ruleMaxScore > topScore) { topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; }
+          if (ruleMaxScore > topScore) {
+            topScore = ruleMaxScore;
+            best = rule;
+            captures = ruleCaptures;
+            matchMethod = ruleMethod;
+          }
           continue; 
         }
+
+        // 3. Fuzzy/Levenshtein Matching
         for (let pattern of rule.triggers || []) {
           let isRelational = pattern.startsWith('+');
           let cleanPattern = isRelational ? pattern.substring(1).trim() : pattern;
           cleanPattern = cleanPattern.replace(/\[(\w+)\]/g, '');
+          
           if (uText.length && cleanPattern.length) {
             const dist = this.getLevenshtein(uText.toLowerCase(), cleanPattern.toLowerCase());
             const fuzzyScore = 1 - (dist / Math.max(uText.length, cleanPattern.length));
-            if (fuzzyScore > ruleMaxScore) { ruleMaxScore = fuzzyScore; ruleMethod = 'fuzzy'; }
+            
+            if (fuzzyScore > ruleMaxScore) {
+              ruleMaxScore = fuzzyScore;
+              ruleMethod = 'fuzzy';
+              debugLog.push(`✓ Rule ${rule.id} FUZZY DISTANCE (${fuzzyScore.toFixed(2)})`);
+            }
           }
         }
-        if (ruleMaxScore > topScore) { topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; }
+
+        if (ruleMaxScore > topScore) {
+          topScore = ruleMaxScore;
+          best = rule;
+          captures = ruleCaptures;
+          matchMethod = ruleMethod;
+        }
       }
-      const threshold = matchMethod === 'regex' ? thresholds.regex : matchMethod === 'vector' ? thresholds.vector : thresholds.fuzzy;
+
+      const threshold = matchMethod === 'regex' ? thresholds.regex : 
+                       matchMethod === 'vector' ? thresholds.vector : 
+                       thresholds.fuzzy;
+
+      debugLog.push(`\nFINAL SELECTION: Rule ${best?.id || 'NULL'} via ${matchMethod} (${topScore.toFixed(2)} / ${threshold.toFixed(2)})`);
+      
+      const debugOut = document.getElementById('debug-output');
+      if (debugOut) {
+        debugOut.innerHTML = debugLog.map(line => `<div class="debug-line">${line}</div>`).join('');
+      }
+
       if (topScore >= threshold) {
-        for (let key in captures) { await db.variables.put({key, value: captures[key]}); }
+        // Save extracted variables
+        for (let key in captures) {
+          await db.variables.put({key, value: captures[key]});
+        }
+        
         const confidenceEl = document.getElementById('last-confidence');
-        if (confidenceEl) { confidenceEl.textContent = `${matchMethod.toUpperCase()} ${(topScore * 100).toFixed(0)}%`; }
+        if (confidenceEl) {
+          confidenceEl.textContent = `${matchMethod.toUpperCase()} ${(topScore * 100).toFixed(0)}%`;
+          confidenceEl.style.color = topScore > 0.9 ? 'var(--success)' : topScore > 0.7 ? 'var(--accent)' : 'var(--dream)';
+        }
+        
         return { rule: best, confidence: topScore, method: matchMethod };
       }
+      
       return null;
     },
+
+    /**
+     * Fallback Generation (The Markov Dream)
+     */
     async dream(seedText, queryVector = null) {
       const recentHistory = await db.history.orderBy('id').reverse().limit(50).toArray();
       const relevantTexts = queryVector ? await getRelevantHistory(queryVector, 5) : [];
+      
       const textChunks = [...recentHistory.map(h => h.text), ...relevantTexts].filter(t => t && t.length > 5);
+
       if (textChunks.length < 5) return "The void is silent... speak more to awake me.";
+
       const fullText = textChunks.join(' ');
       const words = fullText.split(/\s+/).filter(w => w.length > 2);
+      
       if (words.length < 15) return "Neural pathways insufficient for dreaming.";
+
       const trigrams = {};
       for (let i = 0; i < words.length - 2; i++) {
         const key = `${words[i].toLowerCase()} ${words[i + 1].toLowerCase()}`;
@@ -925,43 +1077,92 @@
         if (!trigrams[key]) trigrams[key] = [];
         trigrams[key].push(next);
       }
+
       const seedWords = seedText.toLowerCase().split(/\s+/).filter(w => w.length > 2);
       let current = '';
+      
       for (let i = 0; i < seedWords.length - 1; i++) {
         const testKey = `${seedWords[i]} ${seedWords[i + 1]}`;
-        if (trigrams[testKey]) { current = testKey; break; }
+        if (trigrams[testKey]) {
+          current = testKey;
+          break;
+        }
       }
-      if (!current) { const keys = Object.keys(trigrams); current = keys[Math.floor(Math.random() * keys.length)]; }
+      
+      if (!current) {
+        const keys = Object.keys(trigrams);
+        current = keys[Math.floor(Math.random() * keys.length)];
+      }
+
       if (!current) return "Echoes of the machine...";
+
       let output = current.split(' ');
       let attempts = 0;
       const maxAttempts = dreamIntensity * 2;
+
       while (output.length < dreamIntensity && attempts < maxAttempts) {
         attempts++;
         const options = trigrams[current];
-        if (!options || options.length === 0) { const keys = Object.keys(trigrams); current = keys[Math.floor(Math.random() * keys.length)]; continue; }
+        
+        if (!options || options.length === 0) {
+          const keys = Object.keys(trigrams);
+          current = keys[Math.floor(Math.random() * keys.length)];
+          continue;
+        }
+        
         const next = options[Math.floor(Math.random() * options.length)];
         output.push(next);
+        
         const parts = current.split(' ');
         current = `${parts[1]} ${next.toLowerCase()}`;
-        if (next.match(/[.!?]$/) && output.length > 10 && Math.random() < 0.3) break;
+        
+        if (next.match(/[.!?]$/) && output.length > 10 && Math.random() < 0.3) {
+          break;
+        }
       }
+
       let result = output.join(' ');
       if (result.length > 0) result = result.charAt(0).toUpperCase() + result.slice(1);
       if (result.length > 0 && !result.match(/[.!?]$/)) result += '...';
       return result;
     },
+
+    /**
+     * Dynamic Template Injection
+     */
     async inject(text) {
       const d = new Date();
-      let out = text.replace(/\(status\)/gi, currentStatus).replace(/\(time\)/gi, d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })).replace(/\(day\)/gi, new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(d));
+      let out = text.replace(/\(status\)/gi, currentStatus)
+                 .replace(/\(time\)/gi, d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))
+                 .replace(/\(day\)/gi, new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(d));
+
       const variablesCache = {};
       const vars = await db.variables.toArray();
       vars.forEach(v => { variablesCache[v.key] = v.value; });
-      out = out.replace(/\(([a-zA-Z0-9_]+)\|([^)]+)\)/g, (match, key, fallback) => { return variablesCache.hasOwnProperty(key) ? variablesCache[key] : fallback; });
-      out = out.replace(/\(([a-zA-Z0-9_]+)\)/g, (match, key) => { return variablesCache.hasOwnProperty(key) ? variablesCache[key] : match; });
-      out = out.replace(/\(([A-Z][a-zA-Z0-9_]*)\)/g, (match, key) => { const lowerKey = key.charAt(0).toLowerCase() + key.slice(1); const val = variablesCache[lowerKey]; return val ? val.charAt(0).toUpperCase() + val.slice(1) : match; });
+
+      // Fallback syntax (var|fallback)
+      out = out.replace(/\(([a-zA-Z0-9_]+)\|([^)]+)\)/g, (match, key, fallback) => {
+        return variablesCache.hasOwnProperty(key) ? variablesCache[key] : fallback;
+      });
+
+      // Simple var syntax (var)
+      out = out.replace(/\(([a-zA-Z0-9_]+)\)/g, (match, key) => {
+        return variablesCache.hasOwnProperty(key) ? variablesCache[key] : match;
+      });
+      
+      // Capitalized syntax (Var)
+      out = out.replace(/\(([A-Z][a-zA-Z0-9_]*)\)/g, (match, key) => {
+        const lowerKey = key.charAt(0).toLowerCase() + key.slice(1);
+        const val = variablesCache[lowerKey];
+        return val ? val.charAt(0).toUpperCase() + val.slice(1) : match;
+      });
+
       return out;
     },
+
+    /**
+     * Weighted random selection
+     */
     chooseWeighted(items) {
       if (!items || items.length === 0) return "";
       const pool = [];
@@ -973,19 +1174,44 @@
     }
   };
 
-  window.updateIntensity = async function(val) { dreamIntensity = parseInt(val); document.getElementById('dream-intensity-val').innerText = `Intensity: ${val}`; await db.config.put({key: 'dreamIntensity', value: dreamIntensity}); };
-  window.updateThreshold = async function(type, val) { thresholds[type] = parseFloat(val); document.getElementById(`${type}-threshold-val`).innerText = val; await db.config.put({key: 'thresholds', value: thresholds}); };
-  window.toggleTransitions = async function() { showTransitions = document.getElementById('show-transitions-toggle').checked; await db.config.put({key: 'showTransitions', value: showTransitions}); };
-  window.toggleScriptExecution = async function() { allowScripts = document.getElementById('script-exec-toggle').checked; await db.config.put({key: 'allowScripts', value: allowScripts}); };
-  window.toggleVectorThreading = async function() { vectorThreadingEnabled = document.getElementById('vector-threading-toggle').checked; await db.config.put({key: 'vectorThreading', value: vectorThreadingEnabled}); };
-  
+  // UI Event Handlers
+  window.updateIntensity = async function(val) {
+      dreamIntensity = parseInt(val);
+      document.getElementById('dream-intensity-val').innerText = `Intensity: ${val}`;
+      await db.config.put({key: 'dreamIntensity', value: dreamIntensity});
+  };
+
+  window.updateThreshold = async function(type, val) {
+      thresholds[type] = parseFloat(val);
+      document.getElementById(`${type}-threshold-val`).innerText = val;
+      await db.config.put({key: 'thresholds', value: thresholds});
+  };
+
+  window.toggleTransitions = async function() {
+      showTransitions = document.getElementById('show-transitions-toggle').checked;
+      await db.config.put({key: 'showTransitions', value: showTransitions});
+  };
+
+  window.toggleScriptExecution = async function() {
+      allowScripts = document.getElementById('script-exec-toggle').checked;
+      await db.config.put({key: 'allowScripts', value: allowScripts});
+  };
+
   window.updateResponsePreview = async function() {
       const items = document.querySelectorAll('#response-grid .response-item');
-      if (items.length === 0) { document.getElementById('response-preview').textContent = 'Awaiting neural input...'; return; }
+      if (items.length === 0) {
+        document.getElementById('response-preview').textContent = 'Awaiting neural input...';
+        return;
+      }
+      
       const firstResponse = items[0].querySelector('.response-text')?.value || '';
-      if (!firstResponse.trim()) { document.getElementById('response-preview').textContent = 'Awaiting neural input...'; return; }
-      const injected = await NeoTherion.inject(firstResponse);
-      document.getElementById('response-preview').innerHTML = marked.parse(injected);
+      if (!firstResponse.trim()) {
+        document.getElementById('response-preview').textContent = 'Awaiting neural input...';
+        return;
+      }
+      
+      const preview = await NeoTherion.inject(firstResponse);
+      document.getElementById('response-preview').textContent = preview;
   };
 
   window.addResponseItem = function(text = '', weight = 1) {
@@ -1001,15 +1227,27 @@
     updateResponsePreview();
   };
 
-  window.handleSend = async function(customInput = null) {
+  /**
+   * Main Communication Loop
+   */
+  window.handleSend = async function() {
     const el = document.getElementById('user-input');
-    const rawInput = customInput || el.value.trim();
+    const rawInput = el.value.trim();
     if (!rawInput) return;
-    if (!customInput) { el.value = ""; el.style.height = 'auto'; }
+    el.value = "";
+    el.style.height = 'auto';
+    
+    // Process NLP
     const nlpResult = await processWithNLP(rawInput);
-    for (let key in nlpResult.entities) { await db.variables.put({ key, value: nlpResult.entities[key] }); }
+    for (let key in nlpResult.entities) {
+      await db.variables.put({ key, value: nlpResult.entities[key] });
+    }
+
+    // User message persistence
     const userVec = await getVector(nlpResult.normalizedText);
     await appendChat('user', rawInput, null, null, null, null, null, userVec);
+
+    // Typing Indication
     const chatWin = document.getElementById('chat-window');
     const typing = document.createElement('div');
     typing.className = 'typing-bubble';
@@ -1017,94 +1255,198 @@
     typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
     chatWin.appendChild(typing);
     chatWin.scrollTop = chatWin.scrollHeight;
+
+    // Search for response
     const matchResult = await NeoTherion.findResponse(nlpResult.normalizedText, userVec);
+
     setTimeout(async () => {
       const indicator = document.getElementById('typing-indicator');
       if (indicator) indicator.remove();
+
       if (matchResult && matchResult.rule) {
         const match = matchResult.rule;
         let responseText = Array.isArray(match.responses) ? NeoTherion.chooseWeighted(match.responses) : match.responses;
         const injected = await NeoTherion.inject(responseText);
+
+        // State Transition Logic
         let nextStatus = currentStatus;
         if (match.stateWeights && !match.stateWeights[MAINTAIN]) {
             const pool = [];
-            for (let sName in match.stateWeights) { const w = parseInt(match.stateWeights[sName]) || 1; for (let i = 0; i < w; i++) pool.push(sName); }
+            for (let sName in match.stateWeights) {
+                const w = parseInt(match.stateWeights[sName]) || 1;
+                for (let i = 0; i < w; i++) pool.push(sName);
+            }
             if (pool.length > 0) nextStatus = pool[Math.floor(Math.random() * pool.length)];
         }
+        
         const transition = await NeoTherion.setStatus(nextStatus);
         await appendChat('bot', injected, currentStatus, match.id, matchResult.confidence, matchResult.method, transition);
-        if (match.chainPrompt) { setTimeout(() => handleSend(match.chainPrompt), 1500); }
       } else {
+        // Markov Dream Fallback
         const dreamText = await NeoTherion.dream(rawInput, userVec);
         await appendChat('bot', dreamText, "Dreaming", null, 0, 'dream');
-        if (autoTeachEnabled) await appendTeachPrompt(rawInput);
+
+        if (autoTeachEnabled) {
+          await appendTeachPrompt(rawInput);
+        }
       }
     }, 800);
   };
 
+  /**
+   * DOM Chat Injection
+   */
   async function appendChat(role, text, status = null, ruleId = null, confidence = null, method = null, transition = null, vector = null) {
     const win = document.getElementById('chat-window');
     const now = Date.now();
     const dateStr = new Date(now).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+
     const lastMsg = await db.history.orderBy('id').reverse().limit(1).first();
     let lastDateStr = null;
-    if (lastMsg) lastDateStr = new Date(lastMsg.timestamp).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-    if (!lastDateStr || dateStr !== lastDateStr) {
-      const sep = document.createElement('div'); sep.className = 'date-separator'; sep.textContent = dateStr; win.appendChild(sep);
+    if (lastMsg) {
+      lastDateStr = new Date(lastMsg.timestamp).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
     }
-    const b = document.createElement('div'); b.className = `bubble ${role}`;
+
+    if (!lastDateStr || dateStr !== lastDateStr) {
+      const sep = document.createElement('div');
+      sep.className = 'date-separator';
+      sep.textContent = dateStr;
+      win.appendChild(sep);
+    }
+
+    const b = document.createElement('div');
+    b.className = `bubble ${role}`;
+    
     if (status && role === 'bot') {
       b.setAttribute('data-state', status);
-      const tag = document.createElement('span'); tag.className = 'state-tag'; tag.textContent = status; b.appendChild(tag);
+      const tag = document.createElement('span');
+      tag.className = 'state-tag';
+      tag.textContent = status;
+      b.appendChild(tag);
+      
       if (confidence !== null && method) {
-        const badge = document.createElement('span'); badge.className = 'confidence-badge'; badge.textContent = `${method.toUpperCase()} ${(confidence * 100).toFixed(0)}%`; b.appendChild(badge);
+        const badge = document.createElement('span');
+        badge.className = 'confidence-badge';
+        badge.textContent = `${method.toUpperCase()} ${(confidence * 100).toFixed(0)}%`;
+        badge.style.color = confidence > 0.9 ? 'var(--success)' : confidence > 0.7 ? 'var(--accent)' : 'var(--dream)';
+        b.appendChild(badge);
       }
     }
+    
     const msg = document.createElement('span');
-    msg.innerHTML = (role === 'bot') ? marked.parse(text) : text;
+    msg.innerHTML = text; 
     b.appendChild(msg);
-    if (showTransitions && transition && transition.oldStatus !== transition.newStatus && role === 'bot') {
-      const transDiv = document.createElement('div'); transDiv.className = 'state-transition'; transDiv.textContent = `${transition.oldStatus} → ${transition.newStatus}`; b.appendChild(transDiv);
+    
+    if (allowScripts) {
+      executeScripts(msg);
     }
+
+    if (showTransitions && transition && transition.oldStatus !== transition.newStatus && role === 'bot') {
+      const transDiv = document.createElement('div');
+      transDiv.className = 'state-transition';
+      transDiv.textContent = `${transition.oldStatus} → ${transition.newStatus}`;
+      b.appendChild(transDiv);
+    }
+    
     win.appendChild(b);
-    if (allowScripts) executeScripts(msg);
     win.scrollTop = win.scrollHeight;
+
+    // Persist to IndexedDB
     await db.history.add({ role, text, status, timestamp: now, ruleId, vector });
   }
 
   async function appendTeachPrompt(userInput) {
     const win = document.getElementById('chat-window');
+    
     const prompt = document.createElement('div');
     prompt.className = 'teach-prompt';
     const escapedInput = userInput.replace(/'/g, "\\'");
-    prompt.innerHTML = `Pattern Unrecognized. Incorporate into neural core? <br><br> <button onclick="openTeachMode('${escapedInput}')">TRAIN</button> <button id="quick-enter-btn" onclick="quickCommit('${escapedInput}')">INSTANT LOG</button>`;
+
+    prompt.innerHTML = `
+      Pattern Unrecognized. Incorporate into neural core?
+      <br><br>
+      <button onclick="openTeachMode('${escapedInput}')">TRAIN</button>
+      <button id="quick-enter-btn" onclick="quickCommit('${escapedInput}')" style="background:var(--success); margin-left:8px;">INSTANT LOG</button>
+    `;
     win.appendChild(prompt);
     win.scrollTop = win.scrollHeight;
   }
 
+  /**
+   * Quick Commit: Links current dream to input instantly
+   */
   window.quickCommit = async function(trigger) {
     const botBubbles = document.querySelectorAll('.bubble.bot');
     const lastBubble = botBubbles[botBubbles.length - 1];
-    if (!lastBubble) return;
+    
+    if (!lastBubble) {
+        alert("No response state to commit.");
+        return;
+    }
+
     const responseText = lastBubble.querySelector('span')?.innerText || lastBubble.innerText;
-    const vector = await getAverageVector([trigger]);
-    await db.rules.add({ triggers: [trigger], responses: [{ weight: 1, text: responseText }], stateWeights: { "[Maintain State]": 1 }, requiredStates: [], vector });
-    updateUI();
+
+    if (!responseText || responseText.includes("...") || responseText.length < 5) {
+        alert("Dream sequence too short for stable commit. Use TRAIN.");
+        return;
+    }
+    
+    const btn = document.getElementById('quick-enter-btn');
+    btn.innerText = "LINKING...";
+    btn.disabled = true;
+
+    try {
+        const vector = await getAverageVector([trigger]);
+        await db.rules.add({ 
+            triggers: [trigger], 
+            responses: [{ weight: 1, text: responseText }], 
+            stateWeights: { "[Maintain State]": 1 }, 
+            requiredStates: [], 
+            vector 
+        });
+        
+        btn.innerText = "SUCCESS ✓";
+        btn.style.background = "var(--border)";
+        updateUI();
+    } catch (e) {
+        console.error("Neural Commit Error:", e);
+        btn.innerText = "FAIL";
+        btn.disabled = false;
+    }
   };
 
-  window.openTeachMode = function(input) { document.getElementById('train-trigger').value = input; switchTab(null, 'tab-train'); openLab(); };
-  window.toggleAutoTeach = async function() { autoTeachEnabled = document.getElementById('auto-teach-toggle').checked; await db.config.put({key: 'autoTeach', value: autoTeachEnabled}); };
+  window.openTeachMode = function(input) {
+    document.getElementById('train-trigger').value = input;
+    switchTab(null, 'tab-train');
+    openLab();
+  };
+
+  window.toggleAutoTeach = async function() {
+    autoTeachEnabled = document.getElementById('auto-teach-toggle').checked;
+    await db.config.put({key: 'autoTeach', value: autoTeachEnabled});
+  };
+
   window.refreshVariableEditor = async function() {
     const vars = await db.variables.toArray();
     const container = document.getElementById('variable-neotherion-container');
-    if (container) { container.innerHTML = ''; vars.forEach(v => createVariableRow(v.key, v.value)); }
+    if (container) {
+      container.innerHTML = '';
+      vars.forEach(v => {
+        createVariableRow(v.key, v.value);
+      });
+    }
   };
 
   window.createVariableRow = function(key = '', value = '') {
        const container = document.getElementById('variable-neotherion-container');
        const row = document.createElement('div');
-       row.className = 'var-row'; row.style.cssText = 'display:flex; gap:10px; margin-bottom:10px;';
-       row.innerHTML = `<input type="text" class="multi-line" style="margin:0; flex:1; height:38px; padding:8px; font-size:12px;" placeholder="Key" value="${key}" onblur="updateVar(this, 'key', '${key}')"> <input type="text" class="multi-line" style="margin:0; flex:2; height:38px; padding:8px; font-size:12px;" placeholder="Value" value="${value}" onblur="updateVar(this, 'value', '${key}')"> <button onclick="deleteVar('${key}', this)" style="background:none; border:none; color:var(--err); cursor:pointer; font-size:22px;">×</button>`;
+       row.className = 'var-row';
+       row.style.cssText = 'display:flex; gap:10px; margin-bottom:10px;';
+       row.innerHTML = `
+         <input type="text" class="multi-line" style="margin:0; flex:1; height:38px; padding:8px; font-size:12px; font-family:monospace;" placeholder="Key" value="${key}" onblur="updateVar(this, 'key', '${key}')">
+         <input type="text" class="multi-line" style="margin:0; flex:2; height:38px; padding:8px; font-size:12px;" placeholder="Value" value="${value}" onblur="updateVar(this, 'value', '${key}')">
+         <button onclick="deleteVar('${key}', this)" style="background:none; border:none; color:var(--err); cursor:pointer; font-size:22px;">×</button>
+       `;
        container.appendChild(row);
   };
 
@@ -1112,23 +1454,44 @@
       const row = el.closest('.var-row');
       const newKey = row.querySelector('input[placeholder="Key"]').value.trim();
       const newVal = row.querySelector('input[placeholder="Value"]').value.trim();
-      if (type === 'key' && oldKey && oldKey !== newKey) await db.variables.delete(oldKey);
-      if (newKey) await db.variables.put({ key: newKey, value: newVal });
+
+      if (type === 'key' && oldKey && oldKey.length > 0 && oldKey !== newKey) {
+          await db.variables.delete(oldKey);
+      }
+
+      if (newKey) {
+          await db.variables.put({ key: newKey, value: newVal });
+      }
   };
 
-  window.deleteVar = async function(key, el) { if (key) await db.variables.delete(key); el.closest('.var-row').remove(); };
+  window.deleteVar = async function(key, el) {
+      if (key) await db.variables.delete(key);
+      el.closest('.var-row').remove();
+  };
 
   window.refreshIntentList = async function() {
       const intents = await db.intents.toArray();
       const container = document.getElementById('intent-neotherion-container');
-      if (container) { container.innerHTML = ''; intents.forEach(i => createIntentRow(i.id, i.label, i.pattern)); }
+      if (container) {
+          container.innerHTML = '';
+          if (intents.length === 0) {
+              createIntentRow(null, 'greet', 'hello|hi|hey|greet');
+          } else {
+              intents.forEach(i => createIntentRow(i.id, i.label, i.pattern));
+          }
+      }
   };
 
   window.createIntentRow = function(id = null, label = '', pattern = '') {
       const container = document.getElementById('intent-neotherion-container');
       const row = document.createElement('div');
-      row.className = 'intent-row'; row.style.cssText = 'display:flex; gap:10px; margin-bottom:10px;';
-      row.innerHTML = `<input type="text" class="multi-line" style="margin:0; flex:1; height:38px; padding:8px; font-size:12px;" placeholder="Label" value="${label}" onblur="updateIntent(this, ${id})"> <input type="text" class="multi-line" style="margin:0; flex:2; height:38px; padding:8px; font-size:12px;" placeholder="Pattern" value="${pattern}" onblur="updateIntent(this, ${id})"> <button onclick="deleteIntent(${id}, this)" style="background:none; border:none; color:var(--err); cursor:pointer; font-size:22px;">×</button>`;
+      row.className = 'intent-row';
+      row.style.cssText = 'display:flex; gap:10px; margin-bottom:10px;';
+      row.innerHTML = `
+          <input type="text" class="multi-line" style="margin:0; flex:1; height:38px; padding:8px; font-size:12px; font-weight:bold; color:var(--accent);" placeholder="Label" value="${label}" onblur="updateIntent(this, ${id})">
+          <input type="text" class="multi-line" style="margin:0; flex:2; height:38px; padding:8px; font-size:12px; font-family:monospace;" placeholder="Pattern" value="${pattern}" onblur="updateIntent(this, ${id})">
+          <button onclick="deleteIntent(${id}, this)" style="background:none; border:none; color:var(--err); cursor:pointer; font-size:22px;">×</button>
+      `;
       container.appendChild(row);
   };
 
@@ -1136,20 +1499,44 @@
       const row = el.closest('.intent-row');
       const label = row.querySelector('input[placeholder^="Label"]').value.trim();
       const pattern = row.querySelector('input[placeholder^="Pattern"]').value.trim();
-      if (label && pattern) { if (id) await db.intents.update(id, { label, pattern }); else await db.intents.add({ label, pattern }); refreshIntentList(); }
+      if (label && pattern) {
+          if (id) await db.intents.update(id, { label, pattern });
+          else await db.intents.add({ label, pattern });
+          refreshIntentList();
+      }
   };
 
-  window.deleteIntent = async function(id, el) { if (id) await db.intents.delete(id); el.closest('.intent-row').remove(); };
+  window.deleteIntent = async function(id, el) {
+      if (id) await db.intents.delete(id);
+      el.closest('.intent-row').remove();
+  };
 
   window.loadRuleLibrary = async function() {
     const rules = await db.rules.toArray();
     const listEl = document.getElementById('rule-list');
     const countEl = document.getElementById('rule-count');
     if (countEl) countEl.textContent = rules.length;
-    if (!listEl) return; listEl.innerHTML = '';
+    if (!listEl) return;
+    if (rules.length === 0) { listEl.innerHTML = '<div style="text-align:center; padding:30px; color:var(--subtext); font-style:italic;">No intelligence rules committed yet.</div>'; return; }
+    listEl.innerHTML = '';
     for (const rule of rules) {
-      const card = document.createElement('div'); card.className = 'rule-card';
-      card.innerHTML = `<div class="rule-header"><span class="rule-id">MOD_${rule.id}</span> <div class="rule-actions"> <button class="rule-action-btn" onclick="editRule(${rule.id})">EDIT</button> <button class="rule-action-btn delete" onclick="deleteRule(${rule.id})">REMOVE</button> </div> </div> <div class="rule-detail"><strong>Inputs:</strong> ${rule.triggers?.join(', ')}</div>`;
+      const card = document.createElement('div');
+      card.className = 'rule-card';
+      const triggers = rule.triggers?.join(', ') || 'NONE';
+      const responses = rule.responses?.map(r => r.text).join(' | ') || 'NONE';
+      const states = Object.keys(rule.stateWeights || {}).join(', ') || 'STAY';
+      const filters = rule.requiredStates?.join(', ') || 'GLOBAL';
+      card.innerHTML = `
+        <div class="rule-header"><span class="rule-id">MOD_${rule.id}</span>
+          <div class="rule-actions">
+            <button class="rule-action-btn" onclick="editRule(${rule.id})">EDIT</button>
+            <button class="rule-action-btn delete" onclick="deleteRule(${rule.id})">REMOVE</button>
+          </div>
+        </div>
+        <div class="rule-detail"><strong>Inputs:</strong> ${triggers}</div>
+        <div class="rule-detail"><strong>Outputs:</strong> ${responses.substring(0, 100)}${responses.length > 100 ? '...' : ''}</div>
+        <div class="rule-detail"><strong>Shifts:</strong> ${states}</div>
+        <div class="rule-detail"><strong>Constraint:</strong> ${filters}</div>`;
       listEl.appendChild(card);
     }
   };
@@ -1159,131 +1546,243 @@
     if (!rule) return;
     editingRuleId = ruleId;
     document.getElementById('train-trigger').value = rule.triggers?.join('\n') || '';
-    document.getElementById('train-chain').value = rule.chainPrompt || '';
     document.getElementById('response-grid').innerHTML = '';
-    if (rule.responses) rule.responses.forEach(r => addResponseItem(r.text, r.weight));
-    document.querySelectorAll('#next-state-grid .status-checkbox').forEach(cb => { cb.checked = rule.stateWeights && rule.stateWeights[cb.value]; });
+    if (rule.responses && rule.responses.length > 0) { rule.responses.forEach(r => addResponseItem(r.text, r.weight)); } 
+    else { addResponseItem(); }
+    document.querySelectorAll('#next-state-grid .status-checkbox').forEach(cb => {
+      cb.checked = rule.stateWeights && rule.stateWeights[cb.value];
+      if (cb.checked && cb.parentElement.querySelector('.weight-input')) { cb.parentElement.querySelector('.weight-input').value = rule.stateWeights[cb.value] || 10; }
+    });
     document.querySelectorAll('#filter-state-grid .status-checkbox').forEach(cb => { cb.checked = rule.requiredStates && rule.requiredStates.includes(cb.value); });
-    syncSubStates(); switchTab(null, 'tab-train'); openLab();
+    syncSubStates();
+    const saveBtn = document.getElementById('save-rule-btn');
+    saveBtn.textContent = `UPDATE NEURAL RULE #${ruleId}`;
+    saveBtn.style.background = 'var(--warning)';
+    switchTab(null, 'tab-train');
+    openLab();
   };
 
-  window.deleteRule = async function(ruleId) { if (!confirm(`Delete Rule #${ruleId}?`)) return; await db.rules.delete(ruleId); await loadRuleLibrary(); };
+  window.deleteRule = async function(ruleId) {
+    if (!confirm(`Permanently remove Rule #${ruleId}?`)) return;
+    await db.rules.delete(ruleId);
+    await loadRuleLibrary();
+  };
 
   window.updateUI = async function() {
     currentStatus = await NeoTherion.getStatus();
-    const modeDisp = document.getElementById('mode-display'); if (modeDisp) modeDisp.innerText = currentStatus;
-    const teachCfg = await db.config.get('autoTeach'); autoTeachEnabled = teachCfg ? teachCfg.value : true; document.getElementById('auto-teach-toggle').checked = autoTeachEnabled;
-    const transCfg = await db.config.get('showTransitions'); showTransitions = transCfg ? transCfg.value : true; document.getElementById('show-transitions-toggle').checked = showTransitions;
-    const scriptCfg = await db.config.get('allowScripts'); allowScripts = scriptCfg ? scriptCfg.value : false; document.getElementById('script-exec-toggle').checked = allowScripts;
-    const threadCfg = await db.config.get('vectorThreading'); vectorThreadingEnabled = threadCfg ? threadCfg.value : false; document.getElementById('vector-threading-toggle').checked = vectorThreadingEnabled;
-    const intensityCfg = await db.config.get('dreamIntensity'); dreamIntensity = intensityCfg ? intensityCfg.value : 30; document.getElementById('dream-intensity-slider').value = dreamIntensity;
-    const thresholdCfg = await db.config.get('thresholds'); if (thresholdCfg) thresholds = thresholdCfg.value;
-    const statuses = await NeoTherion.getAllStatuses(); const parents = statuses.filter(s => !s.parent);
-    const listContainer = document.getElementById('state-list-container'); const parentSelect = document.getElementById('new-status-parent');
-    listContainer.innerHTML = ""; parentSelect.innerHTML = `<option value="">TOP-LEVEL</option>`;
+    const modeDisp = document.getElementById('mode-display');
+    if (modeDisp) modeDisp.innerText = currentStatus;
+    const teachCfg = await db.config.get('autoTeach');
+    autoTeachEnabled = teachCfg ? teachCfg.value : true; 
+    document.getElementById('auto-teach-toggle').checked = autoTeachEnabled;
+    const transCfg = await db.config.get('showTransitions');
+    showTransitions = transCfg ? transCfg.value : true; 
+    document.getElementById('show-transitions-toggle').checked = showTransitions;
+    const scriptCfg = await db.config.get('allowScripts');
+    allowScripts = scriptCfg ? scriptCfg.value : false;
+    document.getElementById('script-exec-toggle').checked = allowScripts;
+    const intensityCfg = await db.config.get('dreamIntensity');
+    dreamIntensity = intensityCfg ? intensityCfg.value : 30;
+    document.getElementById('dream-intensity-slider').value = dreamIntensity;
+    document.getElementById('dream-intensity-val').innerText = `Intensity: ${dreamIntensity}`;
+    const thresholdCfg = await db.config.get('thresholds');
+    if (thresholdCfg) {
+      thresholds = thresholdCfg.value;
+      document.getElementById('regex-threshold').value = thresholds.regex;
+      document.getElementById('regex-threshold-val').innerText = thresholds.regex.toFixed(2);
+      document.getElementById('vector-threshold').value = thresholds.vector;
+      document.getElementById('vector-threshold-val').innerText = thresholds.vector.toFixed(2);
+      document.getElementById('fuzzy-threshold').value = thresholds.fuzzy;
+      document.getElementById('fuzzy-threshold-val').innerText = thresholds.fuzzy.toFixed(2);
+    }
+    const statuses = await NeoTherion.getAllStatuses();
+    const parents = statuses.filter(s => !s.parent);
+    const listContainer = document.getElementById('state-list-container');
+    const parentSelect = document.getElementById('new-status-parent');
+    listContainer.innerHTML = "";
+    parentSelect.innerHTML = `<option value="">TOP-LEVEL (ORIGIN)</option>`;
     parents.forEach(p => {
-        listContainer.innerHTML += `<div class="state-item"><span>${p.name}</span><button onclick="deleteStatus('${p.name}')">×</button></div>`;
+        listContainer.innerHTML += `<div class="state-item"><span><strong>${p.name}</strong></span><button onclick="deleteStatus('${p.name}')" style="background:none;border:none;color:var(--err);font-size:22px;cursor:pointer;">×</button></div>`;
         parentSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`;
-        statuses.filter(s => s.parent === p.name).forEach(c => { listContainer.innerHTML += `<div class="state-item sub-item"><span>↳ ${c.name}</span><button onclick="deleteStatus('${c.name}')">×</button></div>`; });
+        statuses.filter(s => s.parent === p.name).forEach(c => {
+            listContainer.innerHTML += `<div class="state-item sub-item"><span>↳ ${c.name}</span><button onclick="deleteStatus('${c.name}')" style="background:none;border:none;color:var(--err);font-size:22px;cursor:pointer;">×</button></div>`;
+        });
     });
     const prepareGrid = (gridId, includeWeight = false) => {
-        const grid = document.getElementById(gridId); if (!grid) return; grid.innerHTML = '';
-        if (gridId === 'next-state-grid') grid.innerHTML += `<label class="check-item"><input type="checkbox" class="status-checkbox" value="${MAINTAIN}"> <span>${MAINTAIN}</span></label>`;
-        parents.forEach(p => { grid.innerHTML += `<label class="check-item"><input type="checkbox" class="status-checkbox" value="${p.name}" onchange="syncSubStates(this)"> <span>${p.name}</span>${includeWeight ? '<input type="number" class="weight-input" value="10" min="1">' : ''}</label>`; statuses.filter(s => s.parent === p.name).forEach(c => { grid.innerHTML += `<label class="check-item sub" data-parent="${c.parent}"><input type="checkbox" class="status-checkbox" value="${c.name}" onchange="syncSubStates(this)"> <span>${c.name}</span>${includeWeight ? '<input type="number" class="weight-input" value="10" min="1">' : ''}</label>`; }); });
+        const grid = document.getElementById(gridId);
+        if (!grid) return; grid.innerHTML = '';
+        if (gridId === 'next-state-grid') { grid.innerHTML += `<label class="check-item" style="border-color:var(--neo);"><input type="checkbox" class="status-checkbox" value="${MAINTAIN}"> <span>${MAINTAIN}</span></label>`; }
+        parents.forEach(p => {
+            const weightHTML = includeWeight ? '<input type="number" class="weight-input" value="10" min="1">' : '';
+            grid.innerHTML += `<label class="check-item"><input type="checkbox" class="status-checkbox" value="${p.name}" onchange="syncSubStates(this)"> <span>${p.name}</span>${weightHTML}</label>`;
+            statuses.filter(s => s.parent === p.name).forEach(c => {
+                grid.innerHTML += `<label class="check-item sub" data-parent="${c.parent}"><input type="checkbox" class="status-checkbox" value="${c.name}" onchange="syncSubStates(this)"> <span>${c.name}</span>${includeWeight ? '<input type="number" class="weight-input" value="10" min="1">' : ''}</label>`;
+            });
+        });
     };
     prepareGrid('next-state-grid', true); prepareGrid('filter-state-grid', false); syncSubStates(); refreshVariableEditor(); refreshIntentList();
-    if (document.getElementById('response-grid').children.length === 0) addResponseItem();
+    if (document.getElementById('response-grid').children.length === 0) { addResponseItem(); }
     await loadRuleLibrary();
   };
 
   window.syncSubStates = function(trigger) {
     document.querySelectorAll('.checkbox-grid').forEach(grid => {
         const checked = Array.from(grid.querySelectorAll('.status-checkbox:checked')).map(cb => cb.value);
-        grid.querySelectorAll('.check-item.sub').forEach(el => { const p = el.getAttribute('data-parent'); if (checked.includes(p)) el.classList.add('active'); else { el.classList.remove('active'); const cb = el.querySelector('input'); if (cb) cb.checked = false; } });
+        grid.querySelectorAll('.check-item.sub').forEach(el => {
+            const p = el.getAttribute('data-parent');
+            if (checked.includes(p)) { el.classList.add('active'); } 
+            else { el.classList.remove('active'); const checkbox = el.querySelector('input'); if (checkbox) checkbox.checked = false; }
+        });
     });
+    if (trigger && trigger.parentElement && trigger.parentElement.classList.contains('sub')) {
+      const parentName = trigger.parentElement.getAttribute('data-parent');
+      if (trigger.checked && parentName) {
+        const parentCheckbox = trigger.closest('.checkbox-grid').querySelector(`.status-checkbox[value="${parentName}"]`);
+        if (parentCheckbox && !parentCheckbox.checked) { parentCheckbox.checked = true; syncSubStates(parentCheckbox); }
+      }
+    }
   };
 
   window.addStatus = async function() {
     const name = document.getElementById('new-status-name').value.trim();
     const parent = document.getElementById('new-status-parent').value;
-    if (name) { const list = await NeoTherion.getAllStatuses(); if (!list.find(s => s.name === name)) { list.push({name, parent: parent || null}); await db.config.put({key: 'allStatuses', value: list}); updateUI(); } }
+    if (name) {
+      const list = await NeoTherion.getAllStatuses();
+      if (!list.find(s => s.name === name)) {
+        list.push({name, parent: parent || null});
+        await db.config.put({key: 'allStatuses', value: list});
+        document.getElementById('new-status-name').value = "";
+        updateUI();
+      } else { alert("State collision: already exists."); }
+    }
   };
 
-  window.deleteStatus = async function(name) { if (!confirm(`Delete state ${name}?`)) return; let list = await NeoTherion.getAllStatuses(); list = list.filter(s => s.name !== name && s.parent !== name); await db.config.put({key: 'allStatuses', value: list}); updateUI(); };
+  window.deleteStatus = async function(name) {
+    const rulesUsingState = await db.rules.filter(r => (r.requiredStates && r.requiredStates.includes(name)) || (r.stateWeights && r.stateWeights[name])).toArray();
+    if (rulesUsingState.length > 0) { if (!confirm(`⚠ ${rulesUsingState.length} active rules depend on this state. Purge anyway?`)) return; } 
+    else { if (!confirm(`Erase state "${name}" from registry?`)) return; }
+    let list = await NeoTherion.getAllStatuses();
+    const wasCurrent = currentStatus === name || list.find(s => s.name === currentStatus)?.parent === name;
+    list = list.filter(s => s.name !== name && s.parent !== name);
+    await db.config.put({key: 'allStatuses', value: list});
+    if (wasCurrent && list.length > 0) { await NeoTherion.setStatus(list[0].name); }
+    updateUI();
+  };
 
   window.saveTraining = async function() {
     const triggers = document.getElementById('train-trigger').value.split('\n').filter(t => t.trim());
-    const chainPrompt = document.getElementById('train-chain').value.trim();
     const stateWeights = {};
-    document.querySelectorAll('#next-state-grid .status-checkbox:checked').forEach(cb => { if (cb.value === MAINTAIN) stateWeights[MAINTAIN] = 1; else { const w = cb.parentElement.querySelector('.weight-input'); stateWeights[cb.value] = w ? parseInt(w.value) : 1; } });
+    document.querySelectorAll('#next-state-grid .status-checkbox:checked').forEach(cb => {
+        if (cb.value === MAINTAIN) { stateWeights[MAINTAIN] = 1; } 
+        else { const weightInput = cb.parentElement.querySelector('.weight-input'); stateWeights[cb.value] = weightInput ? (parseInt(weightInput.value) || 1) : 1; }
+    });
     const requiredStates = Array.from(document.querySelectorAll('#filter-state-grid .status-checkbox:checked')).map(cb => cb.value);
     const responses = [];
-    document.querySelectorAll('#response-grid .response-item').forEach(item => { const text = item.querySelector('.response-text')?.value.trim(); const weight = parseInt(item.querySelector('.weight-input')?.value) || 1; if (text) responses.push({ weight, text }); });
-    const vector = await getAverageVector(triggers);
-    if (editingRuleId !== null) { await db.rules.update(editingRuleId, { triggers, responses, stateWeights, requiredStates, vector, chainPrompt }); editingRuleId = null; } 
-    else { await db.rules.add({ triggers, responses, stateWeights, requiredStates, vector, chainPrompt }); }
-    document.getElementById('train-trigger').value = ""; document.getElementById('train-chain').value = ""; document.getElementById('response-grid').innerHTML = ""; addResponseItem(); updateUI();
+    document.querySelectorAll('#response-grid .response-item').forEach(item => {
+      const text = item.querySelector('.response-text')?.value.trim();
+      const weight = parseInt(item.querySelector('.weight-input')?.value) || 1;
+      if (text) responses.push({ weight, text });
+    });
+    if (responses.length === 0 || Object.keys(stateWeights).length === 0) { alert("Missing outputs or state logic."); return; }
+    let vector = null;
+    if (triggers.length > 0) {
+        const btn = document.getElementById('save-rule-btn'); const originalText = btn.innerText;
+        btn.innerText = "VECTORIZING..."; btn.disabled = true;
+        try { vector = await getAverageVector(triggers); } catch(e) { console.error("Vector failure:", e); }
+        btn.innerText = originalText; btn.disabled = false;
+    }
+    if (editingRuleId !== null) { await db.rules.update(editingRuleId, { triggers, responses, stateWeights, requiredStates, vector }); editingRuleId = null; const saveBtn = document.getElementById('save-rule-btn'); saveBtn.textContent = 'COMMIT NEURAL RULE'; saveBtn.style.background = ''; } 
+    else { await db.rules.add({ triggers, responses, stateWeights, requiredStates, vector }); }
+    document.getElementById('train-trigger').value = ""; document.getElementById('response-grid').innerHTML = ""; addResponseItem(); updateUI();
   };
 
   async function loadHistory() {
     const history = await db.history.orderBy('timestamp').toArray();
     const win = document.getElementById('chat-window'); win.innerHTML = "";
+    let lastDateStr = null;
     for (const h of history) {
+      const d = new Date(h.timestamp); const dateStr = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+      if (dateStr !== lastDateStr) { const div = document.createElement('div'); div.className = 'date-separator'; div.textContent = dateStr; win.appendChild(div); lastDateStr = dateStr; }
       const b = document.createElement('div'); b.className = `bubble ${h.role}`;
       if (h.status && h.role === 'bot') { b.setAttribute('data-state', h.status); const tag = document.createElement('span'); tag.className = 'state-tag'; tag.textContent = h.status; b.appendChild(tag); }
-      const msg = document.createElement('span'); msg.innerHTML = (h.role === 'bot') ? marked.parse(h.text) : h.text; b.appendChild(msg); win.appendChild(b);
-      if (allowScripts) executeScripts(msg);
+      const msg = document.createElement('span'); msg.innerHTML = h.text; b.appendChild(msg); win.appendChild(b);
+      if (allowScripts) { executeScripts(msg); }
     }
     win.scrollTop = win.scrollHeight;
   }
 
   window.toggleLab = function() { const l = document.getElementById('lab'); l.style.display = (l.style.display === 'flex') ? 'none' : 'flex'; };
   window.openLab = function() { document.getElementById('lab').style.display = 'flex'; };
-  window.switchTab = function(e, id) { document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active')); document.getElementById(id).classList.add('active'); if(e) e.target.classList.add('active'); };
+  window.switchTab = function(e, id) {
+    document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
+    const targetTab = document.getElementById(id); const targetBtn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
+    if(targetTab) targetTab.classList.add('active'); if(targetBtn) targetBtn.classList.add('active');
+  };
 
   window.exportDB = async function() {
-    const data = { rules: await db.rules.toArray(), config: await db.config.toArray(), variables: await db.variables.toArray(), intents: await db.intents.toArray(), history: document.getElementById('export-history-toggle').checked ? await db.history.toArray() : [] };
-    navigator.clipboard.writeText(JSON.stringify(data)); alert("Backup copied.");
+    const exportHistory = document.getElementById('export-history-toggle').checked;
+    const data = { rules: await db.rules.toArray(), config: await db.config.toArray(), variables: await db.variables.toArray(), intents: await db.intents.toArray(), history: exportHistory ? await db.history.toArray() : [], version: "NEO-THERION", date: new Date().toISOString() };
+    navigator.clipboard.writeText(JSON.stringify(data, null, 2)); alert("Neural backup copied to clipboard.");
   };
 
   window.importDB = async function() {
-    const raw = prompt("Paste backup:"); if (!raw) return;
+    const raw = prompt("Paste your backup JSON here:"); if (!raw || !raw.trim()) return;
     try {
-      const d = JSON.parse(raw);
-      if (d.rules) { await db.rules.clear(); await db.rules.bulkPut(d.rules); }
-      location.reload();
-    } catch (e) { alert("Fail"); }
+      const data = JSON.parse(raw); if (!confirm(`⚠ Replace current instance with backup?`)) return;
+      if (data.rules) await db.rules.clear().then(() => db.rules.bulkPut(data.rules));
+      if (data.config) await db.config.clear().then(() => db.config.bulkPut(data.config));
+      if (data.variables) await db.variables.clear().then(() => db.variables.bulkPut(data.variables));
+      if (data.intents) await db.intents.clear().then(() => db.intents.bulkPut(data.intents));
+      if (data.history && data.history.length > 0) await db.history.clear().then(() => db.history.bulkPut(data.history));
+      alert("Backup synchronized."); location.reload();
+    } catch (e) { alert("Invalid backup structure."); }
   };
 
   window.parseUniversal = async function() {
     const raw = document.getElementById('bulk-input').value.trim(); if (!raw) return;
-    try { const data = JSON.parse(raw); if (data.rules) await db.rules.bulkPut(data.rules); location.reload(); } catch (e) {}
+    if (raw.startsWith('{')) {
+      try { const data = JSON.parse(raw); if (data.rules) await db.rules.bulkPut(data.rules); alert("Rules injected."); location.reload(); } 
+      catch (e) { alert("Malformed JSON."); }
+    } else {
+        const lines = raw.split('\n').filter(l => l.trim()); let tempUser = "", count = 0;
+        for (let line of lines) {
+            if (line.toLowerCase().startsWith('user:')) tempUser = line.substring(5).trim();
+            else if (line.toLowerCase().startsWith('assistant:') && tempUser) {
+                await db.rules.add({ triggers: [tempUser], responses: [{weight: 1, text: line.substring(10).trim()}], stateWeights: {[MAINTAIN]: 1}, requiredStates: [], vector: null });
+                tempUser = ""; count++;
+            }
+        }
+        alert(`${count} patterns learned.`); location.reload();
+    }
   };
 
-  window.wipeData = async function() { if(!confirm("Purge?")) return; await db.delete(); location.reload(); };
+  window.wipeData = async function() { if(!confirm("⚠ IRREVERSIBLE: PURGE NEURAL CORE?")) return; await db.delete(); location.reload(); };
 
   window.testStateLogic = async function() {
     const hierarchy = await NeoTherion.getStateHierarchy(currentStatus);
     const allRules = await db.rules.toArray();
     const filtered = allRules.filter(rule => { if (!rule.requiredStates || rule.requiredStates.length === 0) return true; return rule.requiredStates.some(req => hierarchy.includes(req)); });
-    alert(`${filtered.length} rules available.`);
+    document.getElementById('debug-current-state').textContent = currentStatus;
+    document.getElementById('debug-hierarchy').textContent = hierarchy.join(' → ');
+    document.getElementById('debug-rule-count').textContent = `${filtered.length} of ${allRules.length} possible rules`;
+    alert('Diagnostics updated in Debug panel.');
   };
 
   window.onload = async () => {
     await updateUI(); await loadHistory();
     setTimeout(async () => { await initNeuralCore(); await preloadVectors(); }, 1000);
+    if ((await db.history.count()) === 0) { await appendChat('bot', 'NeoTherion Awakened.', 'Neutral'); }
     const inputEl = document.getElementById('user-input');
     if (inputEl) {
       inputEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } });
       inputEl.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 150) + 'px'; });
     }
-    const sendBtn = document.getElementById('send-btn'); if (sendBtn) sendBtn.addEventListener('click', () => handleSend());
+    const sendBtn = document.getElementById('send-btn'); if (sendBtn) sendBtn.addEventListener('click', handleSend);
   };
   window.toggleMessageVisibility = function() {
     const bubbles = document.querySelectorAll('.bubble, .date-separator, .teach-prompt');
     for (let i = 0; i < bubbles.length - 1; i++) { bubbles[i].classList.toggle('message-hidden'); }
   };
-  window.NeoTherion = NeoTherion;
 </script>
 </body>
 </html>
