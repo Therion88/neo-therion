@@ -33,7 +33,7 @@ Want to build something?
 
 Full documentation → [docs/NeoTherion.md](docs/NeoTherion.md)
 
-Try the online demo → <a href="https://therion88.github.io/neo-therion.github.io/" target="_blank">NeoTherion Live</a>
+Try the online demo → <a href="https://github.com/Therion88/neo-therion/blob/main/NeoTherion.html" target="_blank">NeoTherion Live.</a>
 
 ## Current Status (January 2026)
 
@@ -59,9 +59,18 @@ This is the initial public release — fully functional and ready for use.
 NeoTherion/
 ├── NeoTherion.html           ← The single-file application (this is what you open)
 ├── README.md                 ← You are here
-└── docs/
-    └── NeoTherion.md         ← Complete documentation + 12 working examples
-
+├── docs/
+|    └── NeoTherion.md         ← Complete documentation + 12 working examples
+└── models/
+     └── Xenova/
+            └── all-MiniLM-L6-v2/
+                    ├── config.json
+                    ├── tokenizer.json
+                    ├── tokenizer_config.json
+                    ├── special_tokens_map.json
+                    └── onnx/
+                         ├── model_quantized.onnx
+                         └── model.onnx
 ```
 
 ## How to Get Started Building
