@@ -44,6 +44,43 @@
 
 ---
 
+## ⚙️ Deployment Modes
+
+NeoTherion is designed with a **Hybrid Neural Architecture**. You can run the beast in two distinct ways depending on your connectivity and privacy requirements.
+
+### Option 1: Standalone HTML (Remote Fallback)
+This is the "Plug and Play" method. You only need the `NeoTherion.html` file.
+*   **How it works:** When you first open the file, the system will attempt to find local models. If they are missing, it automatically synchronizes with the Hugging Face CDN to download the necessary neural layers (~30MB).
+*   **Pros:** Minimal setup; zero storage footprint.
+*   **Cons:** Requires an internet connection for the initial "Awakening" (boot-up); loading speeds depend on your network.
+*   **Persistence:** Once downloaded, the model is stored in your browser's internal Cache Storage.
+
+### Option 2: Local Deployment (Offline & High Performance)
+This is the definitive way to run NeoTherion, especially on legacy hardware like **Android 8**. By providing the models locally, you bypass all external network calls.
+*   **How it works:** The system is hard-coded to prioritize the `models/` directory relative to the HTML file.
+*   **Pros:** 100% Offline functional; near-instant neural synchronization; maximum privacy.
+*   **Cons:** Requires ~60MB of local storage.
+
+#### Required Folder Structure
+To use local models, your project directory must be organized verbatim as follows:
+
+```text
+/NeoTherion-Project/
+├── NeoTherion.html
+└── models/
+    └── Xenova/
+        └── all-MiniLM-L6-v2/
+            ├── config.json
+            ├── tokenizer.json
+            ├── tokenizer_config.json
+            ├── special_tokens_map.json
+            └── onnx/
+                ├── model_quantized.onnx
+                └── model.onnx (Optional)
+```
+
+---
+
 ## System Overview
 
 ### What Is NeoTherion?
@@ -1129,4 +1166,6 @@ Modify, extend, share freely — attribution appreciated but not required
 
 >  *“Do what thou wilt shall be the whole of the Law.”*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+![Version](https://img.shields.io/badge/version-1.0.0-red)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Browser](https://img.shields.io/badge/browser-offline--ready-green)
