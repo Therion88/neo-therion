@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>NeoTherion Neural Core Master</title>
+<title>NeoTherion AI Engine</title>
 <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 <script src="https://unpkg.com/compromise"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -1210,102 +1210,6 @@ matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1
 }
 return matrix[a.length][b.length];
 },
-async findResponse(uText, uVector = null) {
-const allRules = await db.rules.toArray();
-const lastEntry = (await db.history.orderBy('id').reverse().limit(1).toArray())[0];
-const currentHierarchy = await this.getStateHierarchy(currentStatus);
-let best = null, topScore = 0, captures = {};
-let matchMethod = 'none';
-let debugLog = [];
-let vectorScores = [];
-if (vectorThreadingEnabled && uVector) {
-debugLog.push("⚙ Background Vector calculation started...");
-vectorScores = await new Promise(resolve => {
-vectorWorker.onmessage = e => resolve(e.data);
-vectorWorker.postMessage({ type: 'search', uVector, rules: allRules });
-});
-}
-for (const rule of allRules) {
-let trace = `Rule MOD_${rule.id}: `;
-if (rule.requiredStates && rule.requiredStates.length > 0) {
-const stateMatch = rule.requiredStates.some(req => currentHierarchy.includes(req));
-if (!stateMatch) {
-debugLog.push(`<div class="debug-line fail">⊘ MOD_${rule.id} rejected (State Path Mismatch)</div>`);
-continue;
-}
-}
-let ruleMaxScore = 0;
-let ruleCaptures = {};
-let ruleMethod = 'none';
-for (let pattern of rule.triggers || []) {
-let isRelational = pattern.startsWith('+');
-let cleanPattern = isRelational ? pattern.substring(1).trim() : pattern;
-const regexPattern = cleanPattern.replace(/\[(\w+)\]/g, '(.+)');
-const regex = new RegExp(`^${regexPattern}$`, 'i');
-const match = uText.match(regex);
-if (match) {
-ruleMaxScore = thresholds.regex; ruleMethod = 'regex';
-const keys = [...cleanPattern.matchAll(/\[(\w+)\]/g)].map(m => m[1]);
-keys.forEach((key, i) => ruleCaptures[key] = match[i + 1]);
-if (isRelational && lastEntry) ruleMaxScore += 0.15;
-break; 
-}
-}
-if (ruleMaxScore >= thresholds.regex) {
-if (ruleMaxScore > topScore) { 
-topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; 
-}
-debugLog.push(`<div class="debug-line">✓ MOD_${rule.id} Regex Match Valid.</div>`);
-continue; 
-}
-if (rule.vector) {
-const threadScore = vectorScores.find(s => s.id === rule.id)?.score;
-const semanticScore = threadScore !== undefined ? threadScore : (uVector ? cosineSimilarity(uVector, rule.vector) : 0);
-if (semanticScore > ruleMaxScore) { 
-ruleMaxScore = semanticScore; ruleMethod = 'vector'; 
-}
-}
-if (ruleMaxScore >= thresholds.vector) {
-if (ruleMaxScore > topScore) { 
-topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; 
-}
-debugLog.push(`<div class="debug-line">✓ MOD_${rule.id} Vector Similarity: ${ruleMaxScore.toFixed(2)}</div>`);
-continue; 
-}
-for (let pattern of rule.triggers || []) {
-let isRelational = pattern.startsWith('+');
-let cleanPattern = isRelational ? pattern.substring(1).trim() : pattern;
-cleanPattern = cleanPattern.replace(/\[(\w+)\]/g, '');
-if (uText.length && cleanPattern.length) {
-const dist = this.getLevenshtein(uText.toLowerCase(), cleanPattern.toLowerCase());
-const fuzzyScore = 1 - (dist / Math.max(uText.length, cleanPattern.length));
-if (fuzzyScore > ruleMaxScore) { 
-ruleMaxScore = fuzzyScore; ruleMethod = 'fuzzy'; 
-}
-}
-}
-if (ruleMaxScore > topScore) { 
-topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; 
-}
-if (ruleMaxScore > 0.4) {
-debugLog.push(`<div class="debug-line path">? MOD_${rule.id} Low Confidence: ${ruleMaxScore.toFixed(2)} [${ruleMethod}]</div>`);
-}
-}
-const debugOutput = document.getElementById('debug-output');
-if (debugOutput) {
-debugOutput.innerHTML = debugLog.join('');
-}
-const threshold = matchMethod === 'regex' ? thresholds.regex : matchMethod === 'vector' ? thresholds.vector : thresholds.fuzzy;
-if (topScore >= threshold) {
-for (let key in captures) { await db.variables.put({key, value: captures[key]}); }
-const confidenceEl = document.getElementById('last-confidence');
-if (confidenceEl) { 
-confidenceEl.textContent = `${matchMethod.toUpperCase()} ${(topScore * 100).toFixed(0)}%`; 
-}
-return { rule: best, confidence: topScore, method: matchMethod };
-}
-return null;
-},
 async dream(seedText, queryVector = null) {
 const recentHistory = await db.history.orderBy('id').reverse().limit(50).toArray();
 const relevantTexts = queryVector ? await getRelevantHistory(queryVector, 5) : [];
@@ -1426,6 +1330,15 @@ item.innerHTML = `
 grid.appendChild(item);
 updateResponsePreview();
 };
+async function logHeuristic(msg, type = 'normal') {
+const panel = document.getElementById('debug-output');
+if (!panel) return;
+const line = document.createElement('div');
+line.className = 'debug-line ' + type;
+line.textContent = "[" + new Date().toLocaleTimeString() + "] " + msg;
+panel.appendChild(line);
+panel.scrollTop = panel.scrollHeight;
+}
 window.handleSend = async function(customInput = null) {
 const el = document.getElementById('user-input');
 const rawInput = customInput || el.value.trim();
@@ -1433,6 +1346,9 @@ if (!rawInput) return;
 if (!customInput) { 
 el.value = ""; el.style.height = 'auto'; 
 }
+const debugPanel = document.getElementById('debug-output');
+if (debugPanel) debugPanel.innerHTML = "";
+logHeuristic("INPUT STREAM START: " + rawInput);
 const nlpResult = await processWithNLP(rawInput);
 for (let key in nlpResult.entities) { 
 await db.variables.put({ key, value: nlpResult.entities[key] }); 
@@ -1469,11 +1385,93 @@ if (match.chainPrompt) {
 setTimeout(() => handleSend(match.chainPrompt), 1500); 
 }
 } else {
+logHeuristic("FALLBACK: Markov sequence triggered", "fail");
 const dreamText = await NeoTherion.dream(rawInput, userVec);
 await appendChat('bot', dreamText, "Dreaming", null, 0, 'dream');
 if (autoTeachEnabled) await appendTeachPrompt(rawInput);
 }
 }, 800);
+};
+NeoTherion.findResponse = async function(uText, uVector = null) {
+const allRules = await db.rules.toArray();
+const lastEntry = (await db.history.orderBy('id').reverse().limit(1).toArray())[0];
+const currentHierarchy = await NeoTherion.getStateHierarchy(currentStatus);
+let best = null, topScore = 0, captures = {};
+let matchMethod = 'none';
+let vectorScores = [];
+logHeuristic("ACTIVE STATE: " + currentStatus, "path");
+logHeuristic("PATHWAY: " + currentHierarchy.join(' > '), "path");
+if (vectorThreadingEnabled && uVector) {
+logHeuristic("Worker thread processing vector similarity...");
+vectorScores = await new Promise(resolve => {
+vectorWorker.onmessage = e => resolve(e.data);
+vectorWorker.postMessage({ type: 'search', uVector, rules: allRules });
+});
+}
+for (const rule of allRules) {
+if (rule.requiredStates && rule.requiredStates.length > 0) {
+const stateMatch = rule.requiredStates.some(req => currentHierarchy.includes(req));
+if (!stateMatch) {
+logHeuristic("MOD_" + rule.id + " path rejection: " + rule.requiredStates.join(','), "fail");
+continue;
+}
+}
+let ruleMaxScore = 0;
+let ruleCaptures = {};
+let ruleMethod = 'none';
+for (let pattern of rule.triggers || []) {
+let isRelational = pattern.startsWith('+');
+let cleanPattern = isRelational ? pattern.substring(1).trim() : pattern;
+const regexPattern = cleanPattern.replace(/\[(\w+)\]/g, '(.+)');
+const regex = new RegExp("^" + regexPattern + "$", 'i');
+const match = uText.match(regex);
+if (match) {
+ruleMaxScore = thresholds.regex; ruleMethod = 'regex';
+const keys = [...cleanPattern.matchAll(/\[(\w+)\]/g)].map(m => m[1]);
+keys.forEach((key, i) => ruleCaptures[key] = match[i + 1]);
+if (isRelational && lastEntry) ruleMaxScore += 0.15;
+break; 
+}
+}
+if (ruleMaxScore >= thresholds.regex) {
+logHeuristic("MOD_" + rule.id + " Regex Hit!");
+if (ruleMaxScore > topScore) { topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; }
+continue; 
+}
+if (rule.vector) {
+const threadScore = vectorScores.find(s => s.id === rule.id)?.score;
+const semanticScore = threadScore !== undefined ? threadScore : (uVector ? cosineSimilarity(uVector, rule.vector) : 0);
+if (semanticScore > ruleMaxScore) { ruleMaxScore = semanticScore; ruleMethod = 'vector'; }
+}
+if (ruleMaxScore >= thresholds.vector) {
+logHeuristic("MOD_" + rule.id + " Vector Match: " + ruleMaxScore.toFixed(2));
+if (ruleMaxScore > topScore) { topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; }
+continue; 
+}
+for (let pattern of rule.triggers || []) {
+let isRelational = pattern.startsWith('+');
+let cleanPattern = isRelational ? pattern.substring(1).trim() : pattern;
+cleanPattern = cleanPattern.replace(/\[(\w+)\]/g, '');
+if (uText.length && cleanPattern.length) {
+const dist = this.getLevenshtein(uText.toLowerCase(), cleanPattern.toLowerCase());
+const fuzzyScore = 1 - (dist / Math.max(uText.length, cleanPattern.length));
+if (fuzzyScore > ruleMaxScore) { ruleMaxScore = fuzzyScore; ruleMethod = 'fuzzy'; }
+}
+}
+if (ruleMaxScore > topScore) { 
+logHeuristic("MOD_" + rule.id + " candidate via fuzzy: " + ruleMaxScore.toFixed(2));
+topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; 
+}
+}
+const threshold = matchMethod === 'regex' ? thresholds.regex : matchMethod === 'vector' ? thresholds.vector : thresholds.fuzzy;
+if (topScore >= threshold) {
+logHeuristic("MATCH CONFIRMED: Rule " + best.id + " Method: " + matchMethod, "normal");
+for (let key in captures) { await db.variables.put({key, value: captures[key]}); }
+const confidenceEl = document.getElementById('last-confidence');
+if (confidenceEl) { confidenceEl.textContent = matchMethod.toUpperCase() + " " + (topScore * 100).toFixed(0) + "%"; }
+return { rule: best, confidence: topScore, method: matchMethod };
+}
+return null;
 };
 async function appendChat(role, text, status = null, ruleId = null, confidence = null, method = null, transition = null, vector = null) {
 const win = document.getElementById('chat-window');
@@ -1776,145 +1774,6 @@ bubbles[i].classList.toggle('message-hidden');
 }
 };
 window.NeoTherion = NeoTherion;
-async function logHeuristic(msg, type = 'normal') {
-const panel = document.getElementById('debug-output');
-if (!panel) return;
-const line = document.createElement('div');
-line.className = 'debug-line ' + type;
-line.textContent = "[" + new Date().toLocaleTimeString() + "] " + msg;
-panel.appendChild(line);
-panel.scrollTop = panel.scrollHeight;
-}
-</script>
-<script>
-window.handleSend = async function(customInput = null) {
-const el = document.getElementById('user-input');
-const rawInput = customInput || el.value.trim();
-if (!rawInput) return;
-if (!customInput) { el.value = ""; el.style.height = 'auto'; }
-const nlpResult = await processWithNLP(rawInput);
-for (let key in nlpResult.entities) { await db.variables.put({ key, value: nlpResult.entities[key] }); }
-const userVec = await getVector(nlpResult.normalizedText);
-await appendChat('user', rawInput, null, null, null, null, null, userVec);
-const chatWin = document.getElementById('chat-window');
-const typing = document.createElement('div');
-typing.className = 'typing-bubble';
-typing.id = 'typing-indicator';
-typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-chatWin.appendChild(typing);
-chatWin.scrollTop = chatWin.scrollHeight;
-const debugPanel = document.getElementById('debug-output');
-if (debugPanel) debugPanel.innerHTML = "";
-const matchResult = await NeoTherion.findResponse(nlpResult.normalizedText, userVec);
-setTimeout(async () => {
-const indicator = document.getElementById('typing-indicator');
-if (indicator) indicator.remove();
-if (matchResult && matchResult.rule) {
-const match = matchResult.rule;
-let responseText = Array.isArray(match.responses) ? NeoTherion.chooseWeighted(match.responses) : match.responses;
-const injected = await NeoTherion.inject(responseText);
-let nextStatus = currentStatus;
-if (match.stateWeights && !match.stateWeights[MAINTAIN]) {
-const pool = [];
-for (let sName in match.stateWeights) { 
-const w = parseInt(match.stateWeights[sName]) || 1; 
-for (let i = 0; i < w; i++) pool.push(sName); 
-}
-if (pool.length > 0) nextStatus = pool[Math.floor(Math.random() * pool.length)];
-}
-const transition = await NeoTherion.setStatus(nextStatus);
-await appendChat('bot', injected, currentStatus, match.id, matchResult.confidence, matchResult.method, transition);
-if (match.chainPrompt) { setTimeout(() => handleSend(match.chainPrompt), 1500); }
-} else {
-const dreamText = await NeoTherion.dream(rawInput, userVec);
-await appendChat('bot', dreamText, "Dreaming", null, 0, 'dream');
-if (autoTeachEnabled) await appendTeachPrompt(rawInput);
-}
-}, 800);
-};
-NeoTherion.findResponse = async function(uText, uVector = null) {
-const allRules = await db.rules.toArray();
-const lastEntry = (await db.history.orderBy('id').reverse().limit(1).toArray())[0];
-const currentHierarchy = await NeoTherion.getStateHierarchy(currentStatus);
-let best = null, topScore = 0, captures = {};
-let matchMethod = 'none';
-let debugLog = [];
-let vectorScores = [];
-logHeuristic("Heuristic Analysis Init: " + uText);
-logHeuristic("Active State Path: " + currentHierarchy.join(' > '));
-if (vectorThreadingEnabled && uVector) {
-logHeuristic("Vector calculation offloaded to worker thread.");
-vectorScores = await new Promise(resolve => {
-vectorWorker.onmessage = e => resolve(e.data);
-vectorWorker.postMessage({ type: 'search', uVector, rules: allRules });
-});
-}
-for (const rule of allRules) {
-if (rule.requiredStates && rule.requiredStates.length > 0) {
-const stateMatch = rule.requiredStates.some(req => currentHierarchy.includes(req));
-if (!stateMatch) {
-logHeuristic("MOD_" + rule.id + " skipped: required states [" + rule.requiredStates.join(',') + "] missing from current path.", "fail");
-continue;
-}
-}
-let ruleMaxScore = 0;
-let ruleCaptures = {};
-let ruleMethod = 'none';
-for (let pattern of rule.triggers || []) {
-let isRelational = pattern.startsWith('+');
-let cleanPattern = isRelational ? pattern.substring(1).trim() : pattern;
-const regexPattern = cleanPattern.replace(/\[(\w+)\]/g, '(.+)');
-const regex = new RegExp("^" + regexPattern + "$", 'i');
-const match = uText.match(regex);
-if (match) {
-ruleMaxScore = thresholds.regex; ruleMethod = 'regex';
-const keys = [...cleanPattern.matchAll(/\[(\w+)\]/g)].map(m => m[1]);
-keys.forEach((key, i) => ruleCaptures[key] = match[i + 1]);
-if (isRelational && lastEntry) ruleMaxScore += 0.15;
-break; 
-}
-}
-if (ruleMaxScore >= thresholds.regex) {
-logHeuristic("MOD_" + rule.id + " matched via REGEX.", "normal");
-if (ruleMaxScore > topScore) { topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; }
-continue; 
-}
-if (rule.vector) {
-const threadScore = vectorScores.find(s => s.id === rule.id)?.score;
-const semanticScore = threadScore !== undefined ? threadScore : (uVector ? cosineSimilarity(uVector, rule.vector) : 0);
-if (semanticScore > ruleMaxScore) { ruleMaxScore = semanticScore; ruleMethod = 'vector'; }
-}
-if (ruleMaxScore >= thresholds.vector) {
-logHeuristic("MOD_" + rule.id + " potential match via VECTOR: " + ruleMaxScore.toFixed(2), "normal");
-if (ruleMaxScore > topScore) { topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; }
-continue; 
-}
-for (let pattern of rule.triggers || []) {
-let isRelational = pattern.startsWith('+');
-let cleanPattern = isRelational ? pattern.substring(1).trim() : pattern;
-cleanPattern = cleanPattern.replace(/\[(\w+)\]/g, '');
-if (uText.length && cleanPattern.length) {
-const dist = this.getLevenshtein(uText.toLowerCase(), cleanPattern.toLowerCase());
-const fuzzyScore = 1 - (dist / Math.max(uText.length, cleanPattern.length));
-if (fuzzyScore > ruleMaxScore) { ruleMaxScore = fuzzyScore; ruleMethod = 'fuzzy'; }
-}
-}
-if (ruleMaxScore > topScore) { 
-logHeuristic("MOD_" + rule.id + " updated as top candidate via FUZZY: " + ruleMaxScore.toFixed(2));
-topScore = ruleMaxScore; best = rule; captures = ruleCaptures; matchMethod = ruleMethod; 
-}
-}
-const threshold = matchMethod === 'regex' ? thresholds.regex : matchMethod === 'vector' ? thresholds.vector : thresholds.fuzzy;
-if (topScore >= threshold) {
-logHeuristic("Neural Choice Confirmed: MOD_" + best.id + " Score: " + topScore.toFixed(2), "normal");
-for (let key in captures) { await db.variables.put({key, value: captures[key]}); }
-const confidenceEl = document.getElementById('last-confidence');
-if (confidenceEl) { confidenceEl.textContent = matchMethod.toUpperCase() + " " + (topScore * 100).toFixed(0) + "%"; }
-return { rule: best, confidence: topScore, method: matchMethod };
-}
-logHeuristic("No rule threshold reached. Confidence: " + topScore.toFixed(2), "fail");
-return null;
-};
 </script>
 </body>
 </html>
