@@ -1,3 +1,6 @@
+![Version](https://img.shields.io/badge/version-1.0.0-red)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Browser](https://img.shields.io/badge/browser-offline--ready-green)
 # NeoTherion
 
 **Offline-first AI engine running entirely in your browser**  
