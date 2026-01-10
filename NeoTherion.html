@@ -1063,11 +1063,11 @@
     const msg = document.createElement('span');
     msg.innerHTML = (role === 'bot') ? marked.parse(text) : text;
     b.appendChild(msg);
-    if (allowScripts) executeScripts(msg);
     if (showTransitions && transition && transition.oldStatus !== transition.newStatus && role === 'bot') {
       const transDiv = document.createElement('div'); transDiv.className = 'state-transition'; transDiv.textContent = `${transition.oldStatus} → ${transition.newStatus}`; b.appendChild(transDiv);
     }
     win.appendChild(b);
+    if (allowScripts) executeScripts(msg);
     win.scrollTop = win.scrollHeight;
     await db.history.add({ role, text, status, timestamp: now, ruleId, vector });
   }
@@ -1283,6 +1283,7 @@
     const bubbles = document.querySelectorAll('.bubble, .date-separator, .teach-prompt');
     for (let i = 0; i < bubbles.length - 1; i++) { bubbles[i].classList.toggle('message-hidden'); }
   };
+  window.NeoTherion = NeoTherion; // Add this line to make the engine global
 </script>
 </body>
 </html>
