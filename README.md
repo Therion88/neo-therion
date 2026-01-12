@@ -6,7 +6,7 @@
 **Offline-first AI engine running entirely in your browser**  
 Create adaptive chatbots, companions, text adventures, knowledge bases, automation tools — with semantic understanding, persistent memory, state machines, and zero server dependency.
 
-![NeoTherion](https://github.com/Therion88/neo-therion/blob/main/NeoTherion.png) 
+![NeoTherion](https://github.com/Therion88/neo-therion/blob/main/media/NeoTherion.png) 
 
 ## What makes NeoTherion special?
 
@@ -31,7 +31,7 @@ Want to build something?
 → Click **⚙ System Architect Center** → Core Training tab  
 → Paste JSON rules → **PROCESS STREAM**
 
-Full documentation → [docs/NeoTherion.md](docs/NeoTherion.md)
+Full documentation → [NeoTherion.md](NeoTherion.md)
 
 Try the online demo → <a href="https://therion88.github.io/neo-therion.github.io/" target="_blank">NeoTherion Live.</a>
 
@@ -59,8 +59,8 @@ This is the initial public release — fully functional and ready for use.
 NeoTherion/
 ├── NeoTherion.html           ← The single-file application (this is what you open)
 ├── README.md                 ← You are here
-├── docs/
-|    └── NeoTherion.md         ← Complete documentation + 12 working examples
+├── NeoTherion.md             ← Complete documentation + 12 working examples
+├── NeoTherion.png
 └── models/
      └── Xenova/
             └── all-MiniLM-L6-v2/
