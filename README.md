@@ -193,7 +193,4 @@ See DOCUMENTATION.md troubleshooting section for more.
 **MIT License** - Use freely, attribution appreciated but not required.
 ---
 
-> *"Do what thou wilt shall be the whole of the Law."*  
-```
-
----
+> *"Do what thou wilt shall be the whole of the Law."*
