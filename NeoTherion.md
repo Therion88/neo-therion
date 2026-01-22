@@ -2005,22 +2005,6 @@ if (!window.indexedDB) {
 // Use: ["short trigger"]
 ```
 
-### Mobile Issues
-
-**iOS Keyboard Push:**
-```css
-/* Already fixed in v1.0.3 */
-@supports (-webkit-touch-callout: none) {
-  body { height: -webkit-fill-available; }
-}
-```
-
-**Input Zoom:**
-```css
-/* Already fixed - font-size: 16px prevents zoom */
-#user-input { font-size: 16px !important; }
-```
-
 **Storage Cleared:**
 - iOS Safari clears IndexedDB under memory pressure
 - Solution: Export brain regularly
