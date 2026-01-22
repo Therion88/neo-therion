@@ -1,739 +1,1283 @@
-# NeoTherion - Documentation
----
-### Offline-first AI engine for building adaptive chatbots, assistants, text games, automation tools and knowledge systems—with semantic understanding, persistent memory, and zero server dependencies.
----
+# NeoTherion Documentation
 
-## Quick Start
+Complete guide to building, configuring, and deploying AI-powered conversational systems with NeoTherion.
 
-### 30-Second Setup
+## Table of Contents
 
-1. **Open** the HTML file in any modern browser
-2. **Wait** for the neural core to initialize (~30MB model download on first load)
-3. **Type** "hello" to test the default greeting
-4. **Start building** your intelligence in the System Architect Center.
-
-### 5-Minute First Bot
-
-**Goal**: Create a simple name-capture conversation flow.
-
-1. Click **⚙ System Architect Center**
-2. Navigate to **Core Training** tab
-3. Paste this into **Mass Data ingestion**:
-
-```json
-{
-  "rules": [
-    {
-      "triggers": ["hello", "hi"],
-      "responses": [{"weight": 1, "text": "Hi! What's your name?"}],
-      "stateWeights": {"Positive": 1},
-      "requiredStates": []
-    },
-    {
-      "triggers": ["[user]"],
-      "responses": [{"weight": 1, "text": "Nice to meet you, (User)!"}],
-      "stateWeights": {"Neutral": 1},
-      "requiredStates": ["Positive"]
-    }
-  ]
-}
-```
-
-4. Click **PROCESS STREAM**
-5. **Test**: Type "hello" → "Alex" → See the bot respond with your capitalized name
+1. [Introduction](#introduction)
+2. [Core Concepts](#core-concepts)
+3. [Getting Started](#getting-started)
+4. [Rule System](#rule-system)
+5. [State Management](#state-management)
+6. [Variable Injection](#variable-injection)
+7. [Matching Pipeline](#matching-pipeline)
+8. [Dream Mode](#dream-mode)
+9. [Script Execution](#script-execution)
+10. [Prompt Chaining](#prompt-chaining)
+11. [Developer Tools](#developer-tools)
+12. [Standalone Bot Creation](#standalone-bot-creation)
+13. [Working Examples](#working-examples)
+14. [API Reference](#api-reference)
+15. [Performance Tuning](#performance-tuning)
+16. [Troubleshooting](#troubleshooting)
 
 ---
 
-## ⚙️ Deployment Modes
+## Introduction
 
-NeoTherion is designed with a **Hybrid Neural Architecture**. You can run the beast in two distinct ways depending on your connectivity and privacy requirements.
+NeoTherion is a **fully offline, browser-native AI engine** that combines:
+- Traditional rule-based systems
+- Modern semantic vector search
+- State machine architecture
+- Generative fallback mechanisms
 
-### Option 1: Standalone HTML (Remote Fallback)
-This is the "Plug and Play" method. You only need the `NeoTherion.html` file.
-*   **How it works:** When you first open the file, the system will attempt to find local models. If they are missing, it automatically synchronizes with the Hugging Face CDN to download the necessary neural layers (~30MB).
-*   **Pros:** Minimal setup; zero storage footprint.
-*   **Cons:** Requires an internet connection for the initial "Awakening" (boot-up); loading speeds depend on your network.
-*   **Persistence:** Once downloaded, the model is stored in your browser's internal Cache Storage.
+Think of it as a **local scripting API** for building adaptive conversational agents without requiring backend infrastructure.
 
-### Option 2: Local Deployment (Offline & High Performance)
-This is the definitive way to run NeoTherion, especially on legacy hardware like **Android 8**. By providing the models locally, you bypass all external network calls.
-*   **How it works:** The system is hard-coded to prioritize the `models/` directory relative to the HTML file.
-*   **Pros:** 100% Offline functional; near-instant neural synchronization; maximum privacy.
-*   **Cons:** Requires ~60MB of local storage.
+### Key Philosophy
 
-#### Required Folder Structure
-To use local models, your project directory must be organized verbatim as follows:
+- **Developer Control**: Full transparency into matching logic
+- **Privacy First**: Zero telemetry, zero external calls (except model download)
+- **Standalone Capable**: Ship complete bots as single HTML files
+- **Script Enabled**: JavaScript execution for dynamic behavior
 
-```text
-/NeoTherion-Project/
-├── NeoTherion.html
-└── models/
-    └── Xenova/
-        └── all-MiniLM-L6-v2/
-            ├── config.json
-            ├── tokenizer.json
-            ├── tokenizer_config.json
-            ├── special_tokens_map.json
-            └── onnx/
-                ├── model_quantized.onnx
-                └── model.onnx (Optional)
-```
-
----
-
-## System Overview
-
-### What Is NeoTherion?
-
-NeoTherion is a **zero-dependency, offline-first AI engine** that runs entirely in your browser. It combines:
-
-- 🎯 **Pattern Matching** - Regex-based triggers with variable capture
-- 🧠 **Semantic Understanding** - 384-dimensional vector embeddings
-- 💾 **Persistent Memory** - IndexedDB for conversation history and context
-- 🎭 **State Machines** - Hierarchical behavior control
-- 🔄 **Dynamic Variables** - Real-time data injection with smart casing
-- 📚 **RAG Dreaming** - Markov chains seeded by semantic similarity
-
-### Key Specifications
-
-| Feature | Specification |
-|---------|---------------|
-| **Model** | all-MiniLM-L6-v2 (Sentence Transformers) |
-| **Vector Dimensions** | 384 |
-| **Rendering** | **Markdown (Marked.js)** |
-| **Logic** | **Recursive Prompt Chaining** |
-| **Performance** | **Multithreaded Vector Processing** |
-| **Database** | IndexedDB (Dexie.js v5) |
-| **Offline Capability** | 100% after initial load |
-
-
-### Architecture Diagram
+### Architecture Overview
 
 ```
-[ USER INPUT ] --> "What's the weather like?"
-      |
-      v
-[ NLP PREPROCESSING ]
-  • Entity extraction
-  • Text normalization
-  • Intent detection
-      |
-      v
-[ VECTOR EMBEDDING ]
-  • Convert to 384-dim semantic representation
-      |
-      v
-[ MATCHING ENGINE (Waterfall) ]
-  1. REGEX  (1.00) -> Exact patterns + captures
-  2. VECTOR (0.75) -> Semantic similarity
-  3. FUZZY  (0.65) -> Levenshtein/Typo tolerance
-      |
-      v
-< MATCH FOUND? >-----------+
-      | (Yes)              | (No)
-      v                    v
-[ RESPONSE GEN ]     [ DREAM MODE ]
-      |              • RAG / Markov
-      +----------+---------+
-                 |
-                 v
-      [ VARIABLE INJECTION ]
-      (user), (status), (time)
-                 |
-                 v
-      [ STATE TRANSITION ]
-      Update hierarchy chain
-                 |
-                 v
-      [ DISPLAY & STORE ]
-      • Show chat & Save vector
+User Input
+    ↓
+NLP Processing (Compromise)
+    ↓
+Matching Pipeline (Regex → Vector → Fuzzy)
+    ↓
+State Filter (Hierarchical)
+    ↓
+Response Selection (Weighted Random)
+    ↓
+Variable Injection
+    ↓
+Markdown Rendering
+    ↓
+Script Execution (Optional)
+    ↓
+State Transition
+    ↓
+Prompt Chain (Optional)
 ```
 
 ---
 
 ## Core Concepts
 
-### 1. Rules - The Foundation
-Rules define how the engine responds. Each rule is stored in the following JSON format:
+### Rules
+A **rule** defines:
+- **Triggers**: Input patterns to match
+- **Responses**: Output text variants
+- **State Weights**: Where to transition after match
+- **Required States**: When this rule is active
+- **Chain Prompt**: Auto-triggered follow-up
+
+### States
+**States** represent conversational context:
+- Hierarchical (parent/child relationships)
+- Inherited filtering (child inherits parent's rules)
+- Weighted transitions (probabilistic state changes)
+
+### Vectors
+**Vectors** are 384-dimensional embeddings:
+- Generated from trigger text
+- Used for semantic similarity
+- Cached in IndexedDB
+- Preloaded in background
+
+### Variables
+**Variables** enable personalization:
+- Built-in: `(status)`, `(time)`, `(day)`
+- Custom: Captured from `[brackets]` or manually defined
+- Case transformation: `(User)` vs `(user)`
+- Fallback syntax: `(name|friend)`
+
+---
+
+## Getting Started
+
+### Installation
+
+**Method 1: File Protocol (Quick)**
+```bash
+# Just open directly - works offline after first load
+open NeoTherion.html
+```
+
+**Method 2: Local Server (Full Offline)**
+```bash
+# Python 3
+python -m http.server 8000
+
+# Node.js
+npx serve .
+
+# Access at
+http://localhost:8000/NeoTherion.html
+```
+
+### First Run
+
+1. **Model Download**: ~30-90 MB downloads automatically
+2. **Loading Screen**: "AWAKENING THE BEAST..." appears
+3. **Welcome Message**: Bot introduces itself
+4. **Architect Center**: Click bottom button to start building
+
+### Interface Overview
+
+**Header:**
+- Brand logo
+- Current state indicator
+- Confidence display
+- History controls
+
+**Chat Window:**
+- User messages (right, gradient)
+- Bot messages (left, bordered)
+- State tags (above bot messages)
+- Confidence badges
+
+**Input Dock:**
+- Text input (auto-resize)
+- Send button
+- Architect Center toggle
+
+**Architect Center (Lab Panel):**
+- Core Training tab
+- Rule Library tab
+- Architect tab (settings)
+- Debug tab (traces)
+
+---
+
+## Rule System
+
+### Anatomy of a Rule
+
+```json
+{
+  "triggers": ["hello", "hi", "hey"],
+  "responses": [
+    {"weight": 2, "text": "Hello! How can I help?"},
+    {"weight": 1, "text": "Hi there!"}
+  ],
+  "stateWeights": {"Positive": 10, "Neutral": 5},
+  "requiredStates": ["Neutral"],
+  "chainPrompt": "ask_name"
+}
+```
+
+**Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `triggers` | Array | Input patterns to match |
+| `responses` | Array | Output variants with weights |
+| `stateWeights` | Object | Transition targets with probabilities |
+| `requiredStates` | Array | States where rule is active |
+| `chainPrompt` | String | Auto-triggered message (optional) |
+
+### Creating Rules (Visual Editor)
+
+1. Open **Architect Center**
+2. Navigate to **Core Training** tab
+3. Fill sections in order:
+
+**Section 1: Neural Response Logic**
+- Click "+ ADD RESPONSE VARIANT"
+- Enter response text (Markdown supported)
+- Set weight (higher = more frequent)
+- Preview shows real-time variable injection
+
+**Section 2: Prompt Chaining**
+- Enter message to auto-send after this rule
+- Delay: 1.5 seconds
+
+**Section 3: Destination States**
+- Check states to transition into
+- Set weights for probabilistic selection
+- Use `[Maintain State]` to stay put
+
+**Section 4: Activation Triggers**
+- Enter patterns (one per line)
+- Use `[capture]` for variables
+- Prefix `+` for relational boost
+
+**Section 5: Contextual Filter**
+- Check states where rule is active
+- Rule ignored if current state doesn't match
+
+**Save:**
+- Click "COMMIT NEURAL RULE"
+- Rule appears in Rule Library tab
+
+### Creating Rules (JSON)
+
+Paste into **Mass Data Ingestion**:
 
 ```json
 {
   "rules": [
     {
       "triggers": ["hello"],
-      "responses": [
-        { "weight": 1, "text": "### Hi!\nWelcome back, **(User)**." }
-      ],
-      "stateWeights": { "Positive": 1 },
-      "requiredStates": [],
-      "chainPrompt": "check_status"
+      "responses": [{"weight": 1, "text": "Hi!"}],
+      "stateWeights": {"Positive": 1}
     }
   ]
 }
 ```
 
-*   **Responses (Markdown)**: All text is rendered via Markdown. You can use headers (`###`), bold (`**`), and tables to create structured UIs.
-*   **chainPrompt**: If defined, the bot will automatically send this text back to itself 1.5 seconds after responding, allowing for automated multi-step sequences.
+Click "PROCESS STREAM" → Page reloads with new rules.
 
-### 2. Variables & Smart Injection
-NeoTherion uses a "Smart Case" injection system.
+### Trigger Patterns
 
-| Variable | Output |
-|----------|--------|
-| `(user)` | Raw captured value ("alex") |
-| `(User)` | **Title Case** ("Alex") |
-| `(status)` | The active State Name ("Neutral") |
+**Exact Match:**
+```json
+"triggers": ["hello"]
+```
+Matches: "hello"  
+Doesn't match: "hello there", "helo"
+
+**Capture Groups:**
+```json
+"triggers": ["my name is [user]"]
+```
+Matches: "my name is Alex" → Captures `user = "Alex"`
+
+**Relational (Contextual):**
+```json
+"triggers": ["+yes", "+yeah"]
+```
+Gets +0.15 confidence if previous message matched another rule.
+
+**Multiple Patterns:**
+```json
+"triggers": ["hello", "hi", "hey", "greetings"]
+```
+Matches any variant.
+
+### Response Variants
+
+**Single Response:**
+```json
+"responses": [
+  {"weight": 1, "text": "Hello!"}
+]
+```
+
+**Weighted Variants:**
+```json
+"responses": [
+  {"weight": 3, "text": "Common response"},
+  {"weight": 1, "text": "Rare response"}
+]
+```
+75% chance first, 25% chance second.
+
+**Markdown Support:**
+```json
+"responses": [{
+  "weight": 1,
+  "text": "# Title\n**Bold** and *italic*\n- Bullet\n```code```"
+}]
+```
+
+### State Transitions
+
+**Fixed Transition:**
+```json
+"stateWeights": {"Positive": 1}
+```
+Always goes to Positive.
+
+**Probabilistic:**
+```json
+"stateWeights": {
+  "Positive": 7,
+  "Neutral": 3
+}
+```
+70% Positive, 30% Neutral.
+
+**Maintain Current:**
+```json
+"stateWeights": {"[Maintain State]": 1}
+```
 
 ---
 
-**Rule Matching Priority**:
-1. **Regex Match** (Score: 1.0) - Exact pattern with variable capture
-2. **Vector Match** (Score: 0.0-1.0) - Semantic similarity via embeddings
-3. **Fuzzy Match** (Score: 0.0-1.0) - Levenshtein distance for typos
+## State Management
 
-### 2. Triggers - Input Patterns
+### Default States
 
-#### Basic Trigger
-```
-hello
-```
-Matches: "hello", "Hello", "HELLO"
+NeoTherion ships with three base states:
+- **Positive** (default)
+- **Neutral**
+- **Negative**
 
-#### Variable Capture
-```
-my name is [user]
-```
-Matches: "my name is Alex" → Stores `user = "Alex"`
+### Creating States
 
-#### Relational Trigger
-```
-+yes
-```
-**Must** follow another message. Gets **+0.15 priority boost** if history exists.
+**Via Architect Tab:**
+1. Open **Architect** tab
+2. Scroll to "State Hierarchist"
+3. Enter state name (e.g., "Friendly")
+4. Select parent (or leave blank for top-level)
+5. Click "REGISTER STATE"
 
-**Example Flow**:
-```
-Bot: "Do you like pizza?"
-User: "yes"  ← Relational trigger fires with 1.15 confidence
+**Via JSON:**
+```json
+{
+  "config": [{
+    "key": "allStatuses",
+    "value": [
+      {"name": "Friendly", "parent": null},
+      {"name": "Playful", "parent": "Friendly"},
+      {"name": "Helpful", "parent": "Friendly"}
+    ]
+  }]
+}
 ```
 
-#### Multiple Triggers Per Rule
+### State Hierarchy
+
+**Example:**
+```
+Friendly (parent)
+├── Playful (child)
+└── Helpful (child)
+
+Hostile (parent)
+├── Sarcastic (child)
+└── Dismissive (child)
+```
+
+**Inheritance:**
+- If current state is `Playful`
+- Rules requiring `Playful` ✓ activate
+- Rules requiring `Friendly` ✓ activate (parent)
+- Rules requiring `Hostile` ✗ blocked
+
+### Viewing Current State
+
+**Header Display:**
+Shows current state in chip (e.g., "NEUTRAL")
+
+**Debug Tab:**
+- Active State: Current state name
+- Ancestry: Full hierarchy path
+- Rule Availability: Count of active rules
+
+### Programmatic State Changes
+
+**Via Script in Response:**
 ```javascript
-triggers: [
-  "what's your name",
-  "who are you",
-  "tell me about yourself"
-]
+<script>
+(async () => {
+  const transition = await NeoTherion.setStatus('Hostile');
+  console.log(`${transition.oldStatus} → ${transition.newStatus}`);
+})();
+</script>
 ```
-All three patterns point to the same response pool.
 
-### 3. Variables - Dynamic Data
+---
 
-#### Template Variables (Auto-Injected)
+## Variable Injection
+
+### Built-in Variables
 
 | Variable | Output | Example |
 |----------|--------|---------|
-| `(user)` | Captured username | "alex" |
-| `(User)` | **Title-cased** username | "Alex" |
-| `(status)` | Current state | "Happy" |
-| `(time)` | Current time HH:MM | "14:30" |
-| `(day)` | Current weekday | "Monday" |
+| `(status)` | Current state | "Positive" |
+| `(time)` | Current time | "3:45 PM" |
+| `(day)` | Current day | "Monday" |
 
-#### Fallback Syntax
-```
-Hello, (user|stranger)!
-```
-If `user` doesn't exist, displays "Hello, stranger!"
-
-#### Casing Rules (IMPORTANT)
-
-```javascript
-(user)  → "alex"     // Lowercase variable = original value
-(User)  → "Alex"     // Uppercase first letter = Title Case
-(USER)  → "alex"     // All caps = original value (no special behavior)
+**Usage:**
+```json
+"responses": [{
+  "text": "Current state: (status)\nTime: (time)\nDay: (day)"
+}]
 ```
 
-**Best Practice**: Use `(User)` for names in natural sentences:
-```
-"Welcome back, (User)!"  → "Welcome back, Alex!"
-```
+### Custom Variables
 
-### 4. States - Contextual Behavior
-
-States control **when rules activate** and **how the bot behaves**.
-
-#### State Types
-
-**Emotional States**:
-```
-Positive → Happy, Excited, Content
-Negative → Sad, Frustrated, Angry
-Neutral → Calm, Thoughtful
-```
-
-**Categorical States**:
-```
-Tech → Programming, Hardware, AI
-Entertainment → Movies, Music, Games
-```
-
-**Game States**:
-```
-Location → Forest, Town, Dungeon
-Combat → Fighting, Defending
-```
-
-**Persona States**:
-```
-Assistant → Professional, Helper
-Friend → Casual, Supportive
-```
-
-#### Hierarchy Mechanics
-
-```
-Parent State
-  ↳ Child State 1
-  ↳ Child State 2
-```
-
-**Inheritance Rule**: If current state is "Happy" (child of "Positive"), rules requiring "Positive" OR "Happy" will activate.
-
-**Example**:
-```
-Current State: Happy
-
-Rule A: requiredStates: ["Happy"]     → ✓ ACTIVATES
-Rule B: requiredStates: ["Positive"]  → ✓ ACTIVATES (parent)
-Rule C: requiredStates: ["Negative"]  → ✗ FILTERED OUT
-Rule D: requiredStates: []            → ✓ ACTIVATES (always active)
-```
-
-#### Special State: `[Maintain State]`
-
-Prevents state transitions. Use when response shouldn't change mood/context.
-
-```javascript
-stateWeights: {"[Maintain State]": 1}
-```
-
-### 5. Matching Engine - The Three-Stage Waterfall
-
-#### Stage 1: Regex Matching (Threshold: 1.0)
-
-**How It Works**:
-- Converts triggers to regex patterns
-- Captures variables with `[varname]`
-- Exact match only
-
-**Relational Boost**:
-```javascript
-if (trigger.startsWith('+') && hasHistory) {
-  confidence += 0.15;  // Now scores 1.15
+**Capture from Input:**
+```json
+{
+  "triggers": ["my name is [user]"],
+  "responses": [{"text": "Hello, (user)!"}]
 }
 ```
 
-**When It Fires**: User types exact trigger text or close variant.
+User: "my name is Alex"  
+Bot: "Hello, Alex!"
 
-#### Stage 2: Vector Matching (Threshold: 0.75)
+**Manual Definition:**
+1. Open **Architect** tab
+2. Scroll to "Persistent Variable Matrix"
+3. Click "+ REGISTER NEW VARIABLE"
+4. Enter key: `user`, value: `Alex`
 
-**How It Works**:
-- Compares input embedding to rule's **centroid vector**
-- Centroid = average of all trigger embeddings
-- Cosine similarity score (0.0-1.0)
-
-**Example**:
-```
-Rule triggers: ["what is reality", "nature of existence", "philosophical truth"]
-User input: "tell me about the nature of life"
-Vector Score: 0.82 → MATCH (above 0.75 threshold)
-```
-
-**When It Fires**: User expresses same **idea** with different words.
-
-#### Stage 3: Fuzzy Matching (Threshold: 0.65)
-
-**How It Works**:
-- Calculates Levenshtein distance
-- Normalized by max length
-- Preprocessed with NLP (contractions expanded)
-
-**Example**:
-```
-Trigger: "hello there"
-User: "helo ther"  → Distance: 2, Score: 0.82 → MATCH
+**Programmatic:**
+```javascript
+<script>
+(async () => {
+  const db = new Dexie('NeoTherion');
+  await db.open();
+  await db.table('variables').put({key: 'level', value: '10'});
+})();
+</script>
 ```
 
----
+### Case Transformation
 
-### 6. Algorithmic Synthesis & Contextual Inference (Dream Mode)
-
-When the engine encounters a query that falls outside defined Rule thresholds, it does not simply fail. It enters **Dream Mode**—a sophisticated hybrid system that uses **In-Browser RAG** and **Trigram Markov Synthesis** to generate contextually relevant, on-brand responses without a server.
-
-#### I. Contextual Seeding (Vector RAG)
-
-Instead of generating random text, the engine first grounds its "dream" in reality:
-
-1. **Semantic Retrieval**: Performs a vector search across the conversation history or curated knowledge base (IndexedDB).
-2. **Context Injection**: Identifies the 5 most semantically similar data points to serve as a constrained "vocabulary pool" for the generation engine.
-
-#### II. Trigram Probability Modeling
-
-Unlike standard Markov chains that produce "word salad," NeoTherion uses a **Higher-Order Trigram Model**:
-
-1. **Structural Logic**: Analyzes sequences of three words to predict the next, preserving the grammatical rhythm and "voice" of your specific dataset.
-2. **Input Seeding**: The generation is "anchored" by the user's current input, ensuring the response begins with thematic relevance.
-3. **Dynamic Synthesis**: Combines fragments of retrieved memories into entirely new sentences that maintain persona consistency.
-
-#### III. Deterministic Guardrails & Post-Processing
-
-To ensure the output remains coherent and functional:
-
-* **Intelligent Termination**: To prevent run-on sentences, the engine runs a **30% probability check** at every punctuation mark to conclude the thought naturally.
-* **Intensity Control**: The `dreamIntensity` parameter (10–80 tokens) allows developers to tune the "creativity" vs. "brevity" of the engine.
-* **Variable Injection**: Even synthesized text is passed through the NLP layer to inject live data like `(User)`, `(status)`, or `(time)`, making the "dream" feel aware of the present moment.
-
-#### IV. Strategic Utility
-
-While Dream Mode acts as a **High-Tier Fallback** for unconfigured systems, it can be utilized as a **Procedural Feature** by:
-
-* **State Locking**: Restricting dreaming to specific "Creative" or "Lore" states.
-* **Curated Training**: Feeding the engine specific datasets (e.g., technical manuals) to allow it to synthesize help documentation on the fly.
-
-**Example**:
-
+**Lowercase (as-is):**
 ```
-trigger: "Tell me something interesting"
-Process: Vector search retrieves "consciousness" and "digital" from history  Trigram seeds with "Something interesting"  Variable injection checks status.
-Result: "Something interesting to explore regarding the nature of consciousness in this (status) state..."
+(user) → "alex"
+```
+
+**Capitalized:**
+```
+(User) → "Alex"
+```
+
+**Implementation:**
+```javascript
+// Lowercase
+out.replace(/\(([a-z][a-zA-Z0-9_]*)\)/g, (match, key) => {
+  return variablesCache[key] || match;
+});
+
+// Capitalized
+out.replace(/\(([A-Z][a-zA-Z0-9_]*)\)/g, (match, key) => {
+  const lowerKey = key.charAt(0).toLowerCase() + key.slice(1);
+  const val = variablesCache[lowerKey];
+  return val ? val.charAt(0).toUpperCase() + val.slice(1) : match;
+});
+```
+
+### Fallback Syntax
+
+**Default Value:**
+```
+(name|friend)
+```
+
+If `name` is undefined → outputs "friend"
+
+**Implementation:**
+```javascript
+out.replace(/\(([a-zA-Z0-9_]+)\|([^)]+)\)/g, (match, key, fallback) => {
+  return variablesCache.hasOwnProperty(key) ? variablesCache[key] : fallback;
+});
 ```
 
 ---
 
-## User Interface Guide
+## Matching Pipeline
 
-### Main Chat Interface
+NeoTherion uses a **three-tier confidence cascade**:
 
-#### Message Bubbles
-- **User** (Blue, Right-aligned) - Your messages
-- **Bot** (Dark, Left-aligned) - System responses
-- **Typing Indicator** (Animated dots) - Bot is processing
+### 1. Regex Priority (Threshold: 1.0)
 
-#### Metadata Display
-- **State Tag** (Top-left of bot bubble) - Active state during response
-- **Confidence Badge** (Top-right) - Match method + score
-  - `REGEX 100%` - Exact pattern match
-  - `VECTOR 82%` - Semantic understanding
-  - `FUZZY 68%` - Typo correction
-  - `DREAM 0%` - Fallback generation
+**Method:** Exact pattern matching with capture groups
 
-#### Controls
-- **👁 TOGGLE HISTORY** - Hide all but last message (performance mode)
-- **Input Field** - Auto-expands, Shift+Enter for newline
-- **➤ Send Button** - Submit message (or press Enter)
+**Examples:**
+```javascript
+// Exact match
+"hello" → /^hello$/i → Confidence: 1.0
 
-### System Control Center (Lab)
+// With capture
+"my name is [user]" → /^my name is (.+)$/i
+Input: "my name is Alex" → Match: true, Capture: {user: "Alex"}
 
-#### Tab 1: Core Training
+// Relational boost
+"+yes" after matched rule → Confidence: 1.15
+```
 
-**Section 1: Response Intelligence**
-- Add multiple response variants
-- Adjust weights (higher = more likely)
+**When to Use:**
+- Exact commands ("save", "quit", "help")
+- Data extraction ("search for [query]")
+- Contextual follow-ups ("+yes", "+no")
 
-**Neural Response Logic**
-- A live preview area showing how your Markdown and variables will look when rendered in the chat.
+### 2. Vector Semantic (Threshold: 0.75)
 
-**Section 2: Target States**
-- Select next state(s) after response
-- Weighted transitions (random selection)
-- Special option: `[Maintain State]`
+**Method:** 384-dimensional cosine similarity
 
-**Section 3: Context Triggers**
-- One trigger per line
-- Use `[varname]` for captures
-- Prefix `+` for relational triggers
+**Examples:**
+```javascript
+Trigger: "meaning of life"
+User: "what is the purpose of existence"
+→ Cosine Similarity: 0.82 → Match ✓
 
-**Prompt Chaining**
-- Enter a hidden command here to trigger a recursive logic loop
-- (e.g., a "reboot" command that chains into a "diagnostic" command).
+Trigger: "pizza"
+User: "tell me about italian food"
+→ Cosine Similarity: 0.68 → No match (below 0.75)
+```
 
-**Section 4: Activation Filter**
-- Restrict rule to specific states
-- Empty = always active
-- Hierarchy-aware (parent/child logic)
+**When to Use:**
+- Conceptual matching
+- Paraphrased inputs
+- Topic detection
 
-**Mass Data ingestion**
-- Paste JSON, conversation logs, or backups
-- Auto-detects format
-- Bulk import rules
+**Vector Generation:**
+```javascript
+async function getAverageVector(texts) {
+  // For multiple triggers, calculate centroid
+  const vectors = await Promise.all(texts.map(getVector));
+  const avg = vectors.reduce((sum, vec) => 
+    sum.map((v, i) => v + vec[i]), 
+    new Array(384).fill(0)
+  );
+  // Normalize to unit vector
+  const magnitude = Math.sqrt(avg.reduce((sum, v) => sum + v*v, 0));
+  return avg.map(v => v / magnitude);
+}
+```
 
-#### Tab 2: Rule Library
+### 3. Fuzzy Levenshtein (Threshold: 0.65)
 
-- View all trained rules
-- **✎ Edit** - Load rule into training tab
-- **× Delete** - Remove rule (with confirmation)
-- Shows: triggers, responses, states, filters
+**Method:** Edit distance similarity
 
-#### Tab 3: Architect
+**Examples:**
+```javascript
+Trigger: "hello"
+User: "helo" → Distance: 1, Similarity: 0.80 → Match ✓
 
-**Script Execution** ⚠️
-- **Default: OFF** for security
-- Enable to run JavaScript in responses
-- See **Advanced Features: Response Scripting** section
+Trigger: "goodbye"
+User: "good bye" → Distance: 1, Similarity: 0.88 → Match ✓
 
-**Vector Threading**
-- A performance toggle. When enabled, similarity math is offloaded to a background thread (Web Worker).
-- Highly recommended for libraries with >100 rules.*
+Trigger: "restaurant"
+User: "store" → Distance: 8, Similarity: 0.20 → No match
+```
 
-**Neural Intent Mapper**
-- Map patterns to intent labels (e.g., `"hello|hi"` → `"greet"`)
-- Used by NLP preprocessing
-- Customizable pattern matching
-- Saves on blur to prevent database spam
+**Formula:**
+```javascript
+similarity = 1 - (distance / max(len(a), len(b)))
+```
 
-**Auto-Teach Mode**
-- Shows "TEACH" prompt for unknown inputs
-- Quick commit via "ENTER" button
-- Converts dreams into permanent rules
+**When to Use:**
+- Typo tolerance
+- Spacing variations
+- Last resort matching
 
-**Show State Transitions**
-- Display "Neutral → Happy" in chat
-- Visual feedback for state changes
+### Confidence Priority
 
-**Neural Calibration**
-- Adjust dream intensity (10-80 tokens)
-- Higher = longer fallback responses
+```
+1. Regex ≥ 1.0 → Immediate match
+2. Vector ≥ 0.75 → Semantic match
+3. Fuzzy ≥ 0.65 → Fuzzy match
+4. None → Dream Mode
+```
 
-**Variable Memory Matrix**
-- Row-based editor with live updates
-- Individual delete buttons per variable
-- Saves on blur (no keystroke spam)
-- Key-value pairs clearly separated
+### Adjusting Thresholds
 
-**State Hierarchist**
-- Create parent/child states
-- Delete states (checks for rule dependencies)
-- Reorganize state tree
+**Debug Tab → Confidence Sensitivity:**
 
-**Memory Control**
-- **Export**: Copy JSON backup to clipboard
-- **Import**: Restore from JSON
-- **Purge**: Delete all data (⚠️ irreversible)
+```
+Regex Priority: [====|====] 1.0
+Vector Semantic: [====|    ] 0.75
+Fuzzy Levenshtein: [===|     ] 0.65
+```
 
-#### Tab 4: Debug
+**Effects:**
 
-**Current State Analysis**
-- Active state name
-- Full hierarchy chain
-- Available rule count
-
-**Last Match Analysis**
-- Real-time match scoring
-- Filter decisions
-- Confidence calculations
-
-**Confidence Thresholds**
-- **Regex Priority** (0.95-1.0) - Exact match strictness
-- **Vector Threshold** (0.5-0.95) - Semantic similarity cutoff
-- **Fuzzy Threshold** (0.4-0.85) - Typo tolerance level
+| Threshold | Low (0.5) | Medium (0.75) | High (0.9) |
+|-----------|-----------|---------------|------------|
+| Regex | N/A | Exact only | Exact only |
+| Vector | Very loose | Balanced | Very strict |
+| Fuzzy | Typos OK | Minor typos | Exact match |
 
 ---
 
-## Building Intelligence
+## Dream Mode
+
+When no rule matches, NeoTherion enters **Dream Mode** — a generative fallback using RAG-seeded Markov chains.
+
+### How It Works
+
+**Step 1: Context Retrieval**
+```javascript
+// Get last 50 messages
+const recentHistory = await db.history.orderBy('id').reverse().limit(50).toArray();
+
+// Get semantically similar messages (if vector available)
+const relevantTexts = await getRelevantHistory(queryVector, 5);
+```
+
+**Step 2: Trigram Building**
+```javascript
+const words = fullText.split(/\s+/);
+const trigrams = {};
+
+for (let i = 0; i < words.length - 2; i++) {
+  const key = `${words[i]} ${words[i + 1]}`;
+  const next = words[i + 2];
+  if (!trigrams[key]) trigrams[key] = [];
+  trigrams[key].push(next);
+}
+```
+
+**Step 3: Seeded Generation**
+```javascript
+// Try to seed from user input
+const seedWords = userInput.split(/\s+/);
+let current = `${seedWords[0]} ${seedWords[1]}`;
+
+// If not found, pick random trigram
+if (!trigrams[current]) {
+  const keys = Object.keys(trigrams);
+  current = keys[Math.floor(Math.random() * keys.length)];
+}
+```
+
+**Step 4: Chain Generation**
+```javascript
+let output = current.split(' ');
+
+while (output.length < dreamIntensity) {
+  const options = trigrams[current];
+  if (!options) break; // Dead end
+  
+  const next = options[Math.floor(Math.random() * options.length)];
+  output.push(next);
+  
+  // Shift window
+  const parts = current.split(' ');
+  current = `${parts[1]} ${next.toLowerCase()}`;
+}
+```
+
+### Dream Intensity
+
+**Architect Tab → Dream Intensity Slider:**
+
+```
+Coherent [====|========] Chaotic
+         3              80
+```
+
+**Effects:**
+
+| Level | Words | Quality |
+|-------|-------|---------|
+| 3-10 | 3-10 | Short, coherent |
+| 20-40 | 20-40 | Balanced |
+| 60-80 | 60-80 | Long, experimental |
+
+### Quality Requirements
+
+**Minimum Viable:**
+- 50+ messages in history
+- 15+ words in combined text
+
+**Optimal:**
+- 200+ messages
+- Diverse conversational topics
+- Rich vocabulary
+
+**Output Example:**
+```
+User: "tell me about cats"
+
+[Dream Mode - 30 messages in history]
+Bot: "cats are fascinating creatures they move with grace and 
+      independence unlike dogs who seek constant approval..."
+```
+
+---
+
+## Script Execution
+
+**⚠️ POWER FEATURE - Security Implications**
+
+Scripts allow responses to execute JavaScript for:
+- DOM manipulation
+- IndexedDB access
+- API calls
+- Theme changes
+- Interactive elements
+
+### Enabling Scripts
+
+**For Development:**
+1. Open **Architect** tab
+2. Toggle "Executive Script Permission"
+
+**For Standalone Bots:**
+- Auto-enabled if brain JSON is present
+- Assumes user trusts their own brain
+
+### Security Model
+
+**What scripts CAN do:**
+- Modify page styles
+- Access IndexedDB
+- Fetch external data
+- Create UI elements
+- Change bot state
+
+**What scripts CANNOT do:**
+- Access file system
+- Make CORS-blocked requests
+- Persist beyond page session
+- Access other tabs/windows
+
+**Trust Model:**
+- Client-side only (no server risk)
+- User controls on/off toggle
+- Standalone mode = user created content
+- Warning shown for manual enable
+
+### Basic Examples
+
+**Theme Change:**
+```javascript
+<script>
+document.documentElement.style.setProperty('--accent', '#00ff41');
+</script>
+```
+
+**Variable Update:**
+```javascript
+<script>
+(async () => {
+  const db = new Dexie('NeoTherion');
+  await db.open();
+  await db.table('variables').put({key: 'score', value: '100'});
+})();
+</script>
+```
+
+**Dice Roll:**
+```javascript
+<script>
+(async () => {
+  const roll = Math.floor(Math.random() * 20) + 1;
+  const msg = document.querySelector('.bubble.bot:last-child');
+  msg.innerHTML += '<br><br>**Rolled: ' + roll + '**';
+})();
+</script>
+```
+
+### Advanced Patterns
+
+**Interactive Buttons:**
+```javascript
+<script>
+const msg = document.querySelector('.bubble.bot:last-child');
+const btn = document.createElement('button');
+btn.textContent = 'Click Me';
+btn.style.cssText = 'background:var(--accent);color:white;padding:10px;border:none;border-radius:6px;cursor:pointer;';
+btn.onclick = () => {
+  document.getElementById('user-input').value = 'button clicked';
+  window.handleSend();
+};
+msg.appendChild(btn);
+</script>
+```
+
+**State Change with Feedback:**
+```javascript
+<script>
+(async () => {
+  const transition = await NeoTherion.setStatus('Hostile');
+  const msg = document.querySelector('.bubble.bot:last-child');
+  msg.innerHTML += `<br>**State changed:** ${transition.oldStatus} → ${transition.newStatus}`;
+})();
+</script>
+```
+
+**API Integration:**
+```javascript
+<script>
+(async () => {
+  const response = await fetch('https://api.example.com/data');
+  const data = await response.json();
+  const msg = document.querySelector('.bubble.bot:last-child');
+  msg.innerHTML += '<br><br>**API Response:** ' + JSON.stringify(data);
+})();
+</script>
+```
 
 ### Best Practices
 
-#### Trigger Design
-
-**✅ DO**:
+1. **Always wrap in async IIFE:**
 ```javascript
-// Clear, specific patterns
-triggers: ["what's the weather", "weather forecast", "how's the weather"]
-
-// Variable capture
-triggers: ["my name is [user]", "call me [user]", "i'm [user]"]
-
-// Relational context
-triggers: ["+yes", "+that sounds good", "+i agree"]
+<script>
+(async () => {
+  // Your code here
+})();
+</script>
 ```
 
-**❌ DON'T**:
+2. **Handle errors gracefully:**
 ```javascript
-// Too vague (will match everything)
-triggers: ["what", "tell me", "how"]
-
-// Overlapping exact matches (use variants in responses instead)
-triggers: ["hello", "hello there", "hello friend"]
-
-// Missing relational prefix
-triggers: ["yes"]  // Should be "+yes" for follow-ups
+<script>
+(async () => {
+  try {
+    // Risky operation
+  } catch (e) {
+    console.error('Script failed:', e);
+  }
+})();
+</script>
 ```
 
-#### Response Crafting
-
-**✅ DO**:
+3. **Wait for DOM if needed:**
 ```javascript
-responses: [
-  {weight: 10, text: "Hello, (User)! How can I help?"},
-  {weight: 5, text: "Hi there! What brings you here today?"},
-  {weight: 1, text: "Greetings."}
-]
+<script>
+(async () => {
+  await new Promise(r => setTimeout(r, 50));
+  const msg = document.querySelector('.bubble.bot:last-child');
+  // Now msg is guaranteed to exist
+})();
+</script>
 ```
-- Multiple variants for natural conversation
-- Higher weights for preferred responses
-- Use variables for personalization
 
-**❌ DON'T**:
+4. **Use CSS variables for theming:**
 ```javascript
-responses: [
-  {weight: 1, text: "ok"},
-  {weight: 1, text: "sure"},
-  {weight: 1, text: "alright"}
-]
+// Good - respects design system
+document.documentElement.style.setProperty('--accent', '#00ff41');
+
+// Bad - hardcoded values
+document.body.style.background = '#00ff41';
 ```
-- Too short/generic
-- No personality
-- No context utilization
-
-#### State Architecture
-
-**✅ DO**:
-```
-Mood (parent)
-  ↳ Happy
-  ↳ Sad
-  ↳ Neutral
-
-Topic (parent)
-  ↳ Work
-  ↳ Personal
-  ↳ Entertainment
-```
-- Logical groupings
-- Clear hierarchy
-- Distinct purposes
-
-**❌ DON'T**:
-```
-State1
-State2
-HappyWorkMode
-SadPersonalMode
-```
-- Meaningless names
-- No hierarchy
-- Combining multiple contexts
-
-### Training Workflows
-
-#### Method 1: Manual Rule Building (Precision)
-
-**Best For**: Custom personalities, specific behaviors, game logic
-
-1. Open **Core Training** tab
-2. Define 3-5 response variants
-3. Add all relevant triggers
-4. Set state transitions
-5. Configure state filters
-6. Test in chat
-7. Refine based on results
-
-**Time Investment**: 5-10 minutes per rule
-
-#### Method 2: Quick Commit (Speed)
-
-**Best For**: Rapid prototyping, learning from conversations
-
-1. Enable **Auto-Teach Mode**
-2. Chat naturally with the bot
-3. When it dreams, click **ENTER** button
-4. Rule auto-generated from last exchange
-
-**Time Investment**: Instant
-
-#### Method 3: LLM-Generated Data (Scale)
-
-**Best For**: Knowledge bases, persona profiles, complete systems
-
-1. Provide LLM with system documentation
-2. Request JSON data module
-3. Paste into **Mass Data ingestion**
-4. Test and refine
-
-**Time Investment**: Minutes for hundreds of rules
 
 ---
 
-## Advanced Features: Response Scripting
+## Prompt Chaining
 
-NeoTherion allows for high-privilege JavaScript execution directly within bot responses. This enables the engine to modify the UI, interact with external APIs, or update its own database in real-time.
+Auto-trigger follow-up messages after a rule fires.
 
-### ⚠️ Security Protocol
-By default, **Script Execution is DISABLED**. Before using scripting rules, you must:
-1. Open the **Architect** tab.
-2. Toggle **Executive Script Permission** to **ON**.
-3. Acknowledged the red security warning.
+### Basic Usage
 
-### The Technical Mechanism
-Standard browsers block scripts added via `innerHTML`. NeoTherion bypasses this by parsing responses, creating new Script DOM elements, and re-injecting them into the chat bubble. 
-
-**Script Requirements:**
-*   Always wrap logic in an **Async IIFE**: `(async () => { ... })();`
-*   Use spaces inside parentheses—e.g., `function( )`—to prevent conflicts with the Variable Injection engine.
-*   Target the last bubble using: `const msg = document.querySelector('.bubble.bot:last-child');`
-
-### Scripting Best Practices
-
-**✅ DO:**
-*   Use scripting to change CSS variables (Themes).
-*   Use `fetch()` to pull live data from open APIs (Weather, Stocks).
-*   Use `await` for database operations via `Dexie`.
-
-**❌ DON'T:**
-*   Use `document.write()`.
-*   Include scripts in rules meant for untrusted third-party imports.
-*   Perform heavy calculations inside the UI thread (use Vector Threading instead).
-
-
-#### How It Works
-
-**The Technical Achievement**: Browsers block scripts injected via `innerHTML` for security. NeoTherion bypasses this by:
-
-1. Parsing response for `<script>` tags
-2. Creating new script elements
-3. Copying attributes and content
-4. Re-appending to DOM with execution permissions
-
-```javascript
-// Engine code (simplified)
-const executeScripts = (element) => {
-  element.querySelectorAll("script").forEach(oldScript => {
-    const newScript = document.createElement("script");
-    newScript.innerHTML = oldScript.innerHTML;
-    oldScript.parentNode.replaceChild(newScript, oldScript);
-  });
-};
-```
-
-#### Script Template
-
-```javascript
+**Rule 1 (Initial):**
+```json
 {
-  "triggers": ["command"],
-  "responses": [{
-    "weight": 1,
-    "text": "Response text here <script>(async () => { /* your code */ })();</script>"
-  }],
-  "stateWeights": {"[Maintain State]": 1},
-  "requiredStates": []
+  "triggers": ["pizza"],
+  "responses": [{"weight": 1, "text": "I love pizza! Do you?"}],
+  "chainPrompt": "log_preference"
 }
 ```
 
-**Key Points**:
-- Wrap in async IIFE: `(async () => { ... })()`
-- Scripts execute **after** text renders
-- Use spaces in parentheses: `function( )` not `function()` to avoid variable injection conflicts
-- Access to all global objects
+**Rule 2 (Chained):**
+```json
+{
+  "triggers": ["log_preference"],
+  "responses": [{"weight": 1, "text": "> System: Preference logged"}],
+  "stateWeights": {"[Maintain State]": 1}
+}
+```
+
+**Flow:**
+```
+User: "pizza"
+Bot: "I love pizza! Do you?"
+[1.5 second delay]
+Bot: "> System: Preference logged"
+```
+
+### Multi-Step Chains
+
+**Step 1:**
+```json
+{
+  "triggers": ["start quest"],
+  "responses": [{"text": "Quest starting..."}],
+  "chainPrompt": "quest_intro"
+}
+```
+
+**Step 2:**
+```json
+{
+  "triggers": ["quest_intro"],
+  "responses": [{"text": "You enter the dungeon..."}],
+  "chainPrompt": "quest_choice"
+}
+```
+
+**Step 3:**
+```json
+{
+  "triggers": ["quest_choice"],
+  "responses": [{"text": "Go left or right?"}]
+}
+```
+
+**Result:**
+```
+User: "start quest"
+Bot: "Quest starting..."
+[1.5s]
+Bot: "You enter the dungeon..."
+[1.5s]
+Bot: "Go left or right?"
+```
+
+### Interactive Chains
+
+Combine with relational triggers:
+
+```json
+[
+  {
+    "triggers": ["pizza"],
+    "responses": [{"text": "Do you like pizza?"}]
+  },
+  {
+    "triggers": ["+yes", "+yeah"],
+    "responses": [{"text": "Great taste!"}],
+    "chainPrompt": "log_preference",
+    "requiredStates": ["Positive"]
+  },
+  {
+    "triggers": ["log_preference"],
+    "responses": [{"text": "> Preference saved at (time)"}]
+  }
+]
+```
+
+**Flow:**
+```
+User: "pizza"
+Bot: "Do you like pizza?"
+User: "yes"  ← Relational boost (+0.15)
+Bot: "Great taste!"
+[1.5s]
+Bot: "> Preference saved at 3:45 PM"
+```
+
+### Conditional Chains
+
+Use state requirements for branching:
+
+```json
+[
+  {
+    "triggers": ["check inventory"],
+    "responses": [{"text": "Checking..."}],
+    "chainPrompt": "inventory_result"
+  },
+  {
+    "triggers": ["inventory_result"],
+    "responses": [{"text": "You have a sword!"}],
+    "requiredStates": ["HasSword"]
+  },
+  {
+    "triggers": ["inventory_result"],
+    "responses": [{"text": "Inventory is empty."}],
+    "requiredStates": ["NoItems"]
+  }
+]
+```
+
+---
+
+## Developer Tools
+
+### Architect Center Overview
+
+**Core Training Tab:**
+- Response builder with preview
+- Chain prompt editor
+- State selector grids
+- Trigger pattern editor
+- Contextual filter
+
+**Rule Library Tab:**
+- List of all rules
+- Edit/Delete controls
+- Rule count display
+- Trigger preview
+
+**Architect Tab:**
+- Script execution toggle
+- Vector threading toggle
+- Intent mapper
+- Auto-teach toggle
+- Transition visualization
+- Dream intensity slider
+- Variable matrix
+- State hierarchist
+- Import/Export controls
+
+**Debug Tab:**
+- Real-time state analysis
+- Heuristic trace log
+- Confidence threshold sliders
+- State validation button
+
+### Debug Panel
+
+**Heuristic Trace:**
+```
+[3:45:12 PM] INPUT STREAM START: hello
+[3:45:12 PM] ACTIVE STATE: Neutral
+[3:45:12 PM] PATHWAY: Neutral
+[3:45:12 PM] MOD_1 Regex Hit!
+[3:45:12 PM] MATCH CONFIRMED: Rule 1 Method: regex
+```
+
+**Log Types:**
+- `normal` (green) - Successful matches
+- `fail` (red) - Rejections/failures
+- `path` (orange) - State hierarchy info
+
+### State Analysis Panel
+
+```
+Active State: Positive
+Ancestry: Friendly > Positive
+Rule Availability: 12 Rules in path
+```
+
+**Validate Logic:**
+Click "VALIDATE FILTER LOGIC" to test current state against all rules.
+
+### Confidence Tuning
+
+**Regex Priority Threshold:**
+- Range: 0.95 - 1.0
+- Default: 1.0
+- Effect: Usually leave at 1.0 (exact match)
+
+**Vector Semantic Threshold:**
+- Range: 0.5 - 0.95
+- Default: 0.75
+- Effect: Lower = more loose matching
+
+**Fuzzy Levenshtein Threshold:**
+- Range: 0.4 - 0.85
+- Default: 0.65
+- Effect: Lower = more typo tolerance
+
+**Tuning Strategy:**
+1. Start with defaults
+2. Test with various inputs
+3. Check confidence badges on bot messages
+4. Lower thresholds if too many dreams
+5. Raise if getting false positives
+
+### Import/Export
+
+**Export Brain:**
+1. Architect tab → "Memory & Extraction"
+2. Toggle "Include Temporal History" (optional)
+3. Click "COPY NEURAL BACKUP"
+4. JSON copied to clipboard
+
+**Brain Structure:**
+```json
+{
+  "_meta": {
+    "version": "1.0.3",
+    "schemaVersion": 5,
+    "exportDate": "2025-01-22T15:30:00.000Z",
+    "generator": "NeoTherion"
+  },
+  "rules": [...],
+  "config": [...],
+  "variables": [...],
+  "intents": [...],
+  "history": [...]
+}
+```
+
+**Import Brain:**
+1. Click "RESTORE FROM BACKUP"
+2. Paste JSON
+3. Confirm history import (if present)
+4. Page reloads with data
+
+**Bulk Import:**
+1. Core Training tab → "Mass Data Ingestion"
+2. Paste partial or full brain JSON
+3. Click "PROCESS STREAM"
+4. Page reloads
+
+---
+
+## Standalone Bot Creation
+
+### Complete Setup Guide
+
+#### Step 1: Build Your Brain
+
+1. Open NeoTherion in browser
+2. Create rules via Architect Center
+3. Add custom states if needed
+4. Define variables
+5. Test thoroughly
+6. Export brain JSON
+
+#### Step 2: Embed Brain
+
+**Find this section (~line 1290):**
+```html
+<textarea id="neo-brain" style="display:none;">
+
+</textarea>
+```
+
+**Paste your brain JSON:**
+```html
+<textarea id="neo-brain" style="display:none;">
+{
+  "rules": [
+    {
+      "triggers": ["hello"],
+      "responses": [{"weight": 1, "text": "Hello! I'm YourBot."}]
+    }
+  ],
+  "config": [],
+  "variables": [],
+  "intents": []
+}
+</textarea>
+```
+
+#### Step 3: Customize Branding
+
+**Page Title (~line 11):**
+```html
+<title>YourBot - Personal AI Companion</title>
+```
+
+**Loading Screen (~line 919):**
+```html
+<div class="loader-text" id="loader-msg">
+    INITIALIZING YOURBOT...
+</div>
+```
+
+**Header Brand (~line 932):**
+```html
+<div class="brand">
+    YOUR <span>BOT</span>
+</div>
+```
+
+**Welcome Message (~line 2118):**
+```javascript
+async function showWelcomeIfFirstTime() {
+    const historyCount = await db.history.count();
+    if (historyCount > 0) return;
+    
+    const welcomeText = `
+Welcome to **YourBot** — your personal AI companion.
+
+I'm here to help with:
+- Task management
+- Knowledge queries  
+- Creative brainstorming
+- And whatever else you need!
+
+Everything runs locally on your device. Let's get started!
+    `.trim();
+    
+    // ... rest of function
+}
+```
+
+**Welcome Status Label (~line 2139):**
+```javascript
+status: 'Ready'  // Instead of 'Awakening'
+```
+
+**Splash Screen (~line 2255):**
+```html
+<div id="splash-modal">
+  <div class="splash-content" style="...">
+    <button onclick="window.toggleSplash(false)" style="...">×</button>
+    
+    <h2 id="bot-title">Welcome to YourBot</h2>
+    <p id="bot-welcome">
+      Your personal AI assistant for productivity and creativity.<br>
+      100% offline. 100% private. 100% yours.
+    </p>
+    
+    <div class="info-grid">
+      <div>Version</div>
+      <div id="bot-version">2.0.0</div>
+      
+      <div>Created by</div>
+      <div id="bot-author">Your Name</div>
+      
+      <div>Mode</div>
+      <div>Standalone • Offline-first</div>
+    </div>
+    
+    <hr style="...">
+    
+    <button onclick="confirmReset()" class="btn" style="...">
+      ⚠ FACTORY RESET
+    </button>
+  </div>
+</div>
+```
+
+#### Step 4: Optional Styling
+
+**Custom Color Scheme:**
+```css
+/* Find :root selector (~line 32) */
+:root {
+  --bg: #0a0a0c;
+  --panel: #121216;
+  --accent: #00ff41;  /* Change to your brand color */
+  --text: #d1d1d1;
+  /* ... other variables */
+}
+```
+
+**Custom Font:**
+```css
+/* Find body selector (~line 78) */
+body {
+  font-family: 'Your Font', 'Segoe UI', sans-serif;
+  /* ... other styles */
+}
+```
+
+#### Step 5: Test Standalone Mode
+
+1. Save modified HTML
+2. Open in browser
+3. Verify:
+   - ✓ Splash appears automatically
+   - ✓ Architect Center hidden
+   - ✓ Scripts enabled
+   - ✓ Custom branding shows
+   - ✓ Rules work correctly
+
+#### Step 6: Distribution
+
+**Single File:**
+- Just share the HTML file
+- Recipients open in browser
+- Works offline after first load
+
+**With Local Libraries:**
+- Include `/libs/` folder
+- Zip together
+- Unzip and open HTML
+
+**GitHub Pages:**
+```bash
+# Create repository
+git init
+git add NeoTherion.html libs/
+git commit -m "Initial bot"
+git push
+
+# Enable GitHub Pages
+Settings → Pages → Deploy from main branch
+```
 
 ---
 
@@ -1053,115 +1597,603 @@ All examples are **copy-paste ready** for the Mass Data ingestion.
   ]
 }
 ```
-
 ---
-## Console API
 
-NeoTherion exposes its core engine to the global scope for debugging and advanced scripting:
+## API Reference
+
+### Global Objects
+
+#### `NeoTherion`
+
+**Methods:**
 
 ```javascript
-// Check current state
-await NeoTherion.getStatus()
+// Get current state
+const state = await NeoTherion.getStatus();
+// Returns: "Positive"
 
-// Manually trigger state transition
-await NeoTherion.setStatus("Combat")
+// Set state
+const transition = await NeoTherion.setStatus('Hostile');
+// Returns: {oldStatus: "Positive", newStatus: "Hostile"}
 
-// Test dream generation
-await NeoTherion.dream("prompt text", vectorOptional)
+// Get all states
+const states = await NeoTherion.getAllStatuses();
+// Returns: [{name: "Positive", parent: null}, ...]
 
-// Inject variables into text
-await NeoTherion.inject("Hello (User)!")
+// Get state hierarchy
+const hierarchy = await NeoTherion.getStateHierarchy('Playful');
+// Returns: ["Friendly", "Playful"]
 
-// Get state hierarchy chain
-await NeoTherion.getStateHierarchy("Happy")
+// Calculate edit distance
+const dist = NeoTherion.getLevenshtein('hello', 'helo');
+// Returns: 1
+
+// Generate dream text
+const dream = await NeoTherion.dream('tell me about cats', vectorOrNull);
+// Returns: "cats are fascinating creatures they..."
+
+// Inject variables
+const injected = await NeoTherion.inject('Hello (User), today is (day)');
+// Returns: "Hello Alex, today is Monday"
+
+// Choose weighted response
+const response = NeoTherion.chooseWeighted([
+  {weight: 3, text: "Common"},
+  {weight: 1, text: "Rare"}
+]);
+// Returns: "Common" (75% of the time)
+
+// Find matching rule
+const match = await NeoTherion.findResponse(userInput, userVector);
+// Returns: {rule: {...}, confidence: 0.95, method: "regex"}
+```
+
+#### `db` (Dexie Instance)
+
+```javascript
+// Access database
+const db = new Dexie('NeoTherion');
+await db.open();
+
+// Tables
+db.rules      // Rule definitions
+db.history    // Conversation log
+db.config     // System settings
+db.variables  // Custom variables
+db.intents    // Intent mappings
+
+// Examples
+await db.rules.toArray();
+await db.variables.put({key: 'name', value: 'Alex'});
+await db.history.where('role').equals('user').toArray();
+```
+
+### Window Functions
+
+```javascript
+// Send message
+window.handleSend('custom input');
+
+// UI controls
+window.toggleLab();              // Open/close Architect Center
+window.openLab();                // Open Architect Center
+window.switchTab(event, 'tab-train');  // Switch lab tab
+
+// State management
+window.updateUI();               // Refresh all UI elements
+window.syncSubStates();          // Update state hierarchy UI
+
+// Rule management
+window.saveTraining();           // Save current rule being edited
+window.editRule(ruleId);         // Load rule into editor
+window.deleteRule(ruleId);       // Delete rule
+window.loadRuleLibrary();        // Refresh rule list
+
+// Variable management
+window.createVariableRow(key, value);
+window.updateVar(element, type, oldKey);
+window.deleteVar(key, element);
+window.refreshVariableEditor();
+
+// Intent management
+window.createIntentRow(id, label, pattern);
+window.updateIntent(element, id);
+window.deleteIntent(id, element);
+window.refreshIntentList();
+
+// Settings
+window.updateIntensity(value);           // Dream intensity
+window.updateThreshold(type, value);     // Confidence thresholds
+window.toggleTransitions();              // State transition display
+window.toggleScriptExecution();          // Script permission
+window.toggleVectorThreading();          // Worker threading
+window.toggleAutoTeach();                // Auto-teach prompts
+
+// Import/Export
+window.exportDB();               // Copy brain to clipboard
+window.importDB();               // Paste brain from clipboard
+window.parseUniversal();         // Bulk import
+window.wipeData();               // Delete all data
+
+// History
+window.clearChatWindow();        // Clear display only
+window.clearChatHistory();       // Delete from database
+window.toggleMessageVisibility(); // Hide/show old messages
+
+// Splash screen
+window.toggleSplash(show);       // true = show, false = hide
+
+// Teaching
+window.quickCommit(trigger);     // Save last bot response as rule
+window.openTeachMode(input);     // Open editor with trigger
+
+// Debug
+window.testStateLogic();         // Validate state filters
+```
+
+### Helper Functions (Internal)
+
+```javascript
+// Vector operations
+await getVector(text);                    // Generate embedding
+await getAverageVector(texts);            // Centroid of multiple
+cosineSimilarity(vectorA, vectorB);       // Similarity score
+
+// NLP
+await processWithNLP(input);              // Intent + entities
+// Returns: {intent: "greeting", entities: {user: "Alex"}, normalizedText: "..."}
+
+// History
+await getRelevantHistory(queryVector, limit);  // Semantic retrieval
+
+// Logging
+await logHeuristic(message, type);        // Add to debug panel
+
+// Preload
+await preloadVectors();                   // Background vector sync
+
+// Core
+await initNeuralCore();                   // Load ML model
+await appendChat(role, text, ...);        // Add message bubble
+await appendTeachPrompt(userInput);       // Show teach prompt
+
+// Lifecycle
+await loadHistory();                      // Restore chat from DB
+await showWelcomeIfFirstTime();           // First-run message
+await autoIngestBrain();                  // Load standalone brain
+```
 
 ---
 
-## Data Import/Export
+## Performance Tuning
 
-### Import Formats
+### Vector Preloading
 
-The **System Architect Center** accepts three formats:
+**Automatic:**
+- Triggers when page loads
+- Processes rules without vectors
+- Shows "VECTORS SYNCING..." indicator
+- Non-blocking (happens in background)
 
-#### 1. Full JSON Backup (Recommended)
+**Manual Control:**
+```javascript
+await preloadVectors();
+```
 
-Complete system state including rules, config, variables, intents, and optionally history.
+**Monitoring:**
+Watch header for "NEURAL SYNCED" chip.
 
+### Worker Threading
+
+**When to Enable:**
+- 100+ rules with vectors
+- Noticeable UI lag during typing
+- Mobile devices
+
+**How to Enable:**
+1. Architect tab
+2. Toggle "Vector Threading (Optimization)"
+
+**Performance Impact:**
+```
+Without Worker:
+100 rules × 50ms = 5000ms (blocks UI)
+
+With Worker:
+100 rules × 50ms = 5000ms (non-blocking)
+UI remains responsive
+```
+
+### IndexedDB Optimization
+
+**Limit History Size:**
+```javascript
+// Delete old messages
+const cutoff = Date.now() - (30 * 24 * 60 * 60 * 1000); // 30 days
+await db.history.where('timestamp').below(cutoff).delete();
+```
+
+**Export Without History:**
+1. Uncheck "Include Temporal History"
+2. Export brain
+3. Much smaller file size
+
+**Batch Operations:**
+```javascript
+// Bad - many transactions
+for (const rule of rules) {
+  await db.rules.add(rule);
+}
+
+// Good - single transaction
+await db.rules.bulkAdd(rules);
+```
+
+### Dream Mode Optimization
+
+**Reduce History Window:**
+```javascript
+// In dream() function
+const recentHistory = await db.history.orderBy('id').reverse().limit(20).toArray();
+// Instead of 50
+```
+
+**Lower Intensity:**
+```javascript
+dreamIntensity = 15;  // Instead of 30
+```
+
+### Browser Compatibility
+
+**Storage Quotas:**
+- Chrome: ~60% of available disk
+- Firefox: ~50% of available disk
+- Safari: 1GB max
+- Mobile: Often lower
+
+**Memory Management:**
+```javascript
+// Check storage usage
+if (navigator.storage && navigator.storage.estimate) {
+  const {usage, quota} = await navigator.storage.estimate();
+  console.log(`Using ${usage} of ${quota} bytes`);
+}
+```
+
+---
+
+## Troubleshooting
+
+### Loader Hangs
+
+**Symptoms:**
+- "AWAKENING THE BEAST..." never completes
+- Page frozen
+
+**Causes:**
+1. Model download failed
+2. Library loading error
+3. Browser incompatibility
+
+**Solutions:**
+```javascript
+// Check console (F12)
+// Look for:
+// - Network errors
+// - Script errors
+// - CORS warnings
+
+// Try:
+1. Clear browser cache
+2. Use local server (python -m http.server)
+3. Check internet connection
+4. Try different browser
+5. Disable browser extensions
+```
+
+### Rules Not Matching
+
+**Symptoms:**
+- Always enters Dream Mode
+- Expected rule doesn't fire
+
+**Diagnosis:**
+1. Open Debug tab
+2. Send test input
+3. Check heuristic trace
+
+**Common Issues:**
+
+```javascript
+// Issue: No vector generated
+// Trace: "MOD_5 candidate via fuzzy: 0.45"
+// Solution: Wait for "NEURAL SYNCED" indicator
+
+// Issue: State filter blocking
+// Trace: "MOD_5 path rejection: Positive,Friendly"
+// Solution: Check current state, adjust requiredStates
+
+// Issue: Threshold too high
+// Trace: "MOD_5 Vector Match: 0.72" (but threshold is 0.75)
+// Solution: Lower vector threshold in Debug tab
+
+// Issue: Typo in trigger
+// Trace: No mention of rule at all
+// Solution: Check trigger spelling in Rule Library
+```
+
+### Scripts Not Executing
+
+**Symptoms:**
+- `<script>` tags visible in response
+- No dynamic behavior
+
+**Causes:**
+1. Scripts disabled
+2. Syntax error in script
+3. Async timing issue
+
+**Solutions:**
+```javascript
+// 1. Enable scripts
+// Architect tab → "Executive Script Permission" → ON
+
+// 2. Check console for errors
+// F12 → Console tab
+
+// 3. Add timing delay
+<script>
+(async () => {
+  await new Promise(r => setTimeout(r, 100));  // Wait for DOM
+  // Your code here
+})();
+</script>
+```
+
+### Storage Errors
+
+**Symptoms:**
+- "Storage operation failed"
+- Rules disappear after reload
+- Export fails
+
+**Causes:**
+1. Quota exceeded
+2. Private browsing mode
+3. Browser settings
+
+**Solutions:**
+```javascript
+// Check quota
+const {usage, quota} = await navigator.storage.estimate();
+if (usage / quota > 0.9) {
+  console.warn('Storage almost full!');
+}
+
+// Clear old data
+await db.history.where('timestamp')
+  .below(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  .delete();
+
+// Check browser mode
+if (!window.indexedDB) {
+  alert('IndexedDB not available (private browsing?)');
+}
+```
+
+### Vector Generation Slow
+
+**Symptoms:**
+- "SYNCING: 50/100" stays for minutes
+- Page unresponsive
+
+**Causes:**
+1. Weak CPU
+2. Too many rules
+3. Worker not enabled
+
+**Solutions:**
+```javascript
+// Enable worker threading
+// Architect tab → "Vector Threading" → ON
+
+// Reduce rule count
+// Delete unused rules in Rule Library
+
+// Use simpler triggers
+// Instead of: ["very long trigger with many words"]
+// Use: ["short trigger"]
+```
+
+### Mobile Issues
+
+**iOS Keyboard Push:**
+```css
+/* Already fixed in v1.0.3 */
+@supports (-webkit-touch-callout: none) {
+  body { height: -webkit-fill-available; }
+}
+```
+
+**Input Zoom:**
+```css
+/* Already fixed - font-size: 16px prevents zoom */
+#user-input { font-size: 16px !important; }
+```
+
+**Storage Cleared:**
+- iOS Safari clears IndexedDB under memory pressure
+- Solution: Export brain regularly
+- Standalone mode recommended (brain embedded)
+
+### Import Fails
+
+**Symptoms:**
+- "Import failed: Unexpected token"
+- Page doesn't reload
+
+**Causes:**
+1. Invalid JSON
+2. Missing quotes
+3. Trailing commas
+
+**Solutions:**
+```javascript
+// Validate JSON first
+try {
+  JSON.parse(yourBrainJSON);
+} catch (e) {
+  console.error('Invalid JSON:', e.message);
+}
+
+// Common fixes:
+// - Remove trailing commas: {...},] → {...}]
+// - Escape quotes: "text": "say "hi"" → "text": "say \"hi\""
+// - Check brackets: Ensure all {[ are closed }]
+```
+
+### Debug Panel Empty
+
+**Symptoms:**
+- No trace logs appear
+- Panel shows "System idle..."
+
+**Solutions:**
+```javascript
+// Send a test message
+// Logs should appear immediately
+
+// If still empty:
+1. Refresh page
+2. Check console for errors
+3. Verify Debug tab is active
+```
+
+---
+
+## FAQ
+
+**Q: Does this work offline?**  
+A: Yes, after the first model download (~30-90 MB), everything is cached locally.
+
+**Q: Where is data stored?**  
+A: IndexedDB in your browser. Data never leaves your device.
+
+**Q: Can I use this commercially?**  
+A: Yes, MIT license allows commercial use.
+
+**Q: What's the model size?**  
+A: ~30-90 MB (all-MiniLM-L6-v2 ONNX format), downloads once, caches forever.
+
+**Q: What about privacy?**  
+A: No telemetry, no analytics, no external calls (except model download on first run).
+
+**Q: Can I reset everything?**  
+A: Yes, Architect tab → "PURGE ALL DATA" → Confirm → Reloads fresh.
+
+**Q: Does it remember conversations?**  
+A: Yes, stored in IndexedDB. Clear with "CLEAR HISTORY" button.
+
+**Q: What browsers are supported?**  
+A: Opera, Chrome 90+, Firefox 88+, Safari 14+, Edge 90+.
+
+---
+
+## Appendix
+
+### File Formats
+
+**Brain JSON:**
 ```json
 {
+  "_meta": {...},
   "rules": [...],
   "config": [...],
   "variables": [...],
   "intents": [...],
-  "history": [],
-  "version": "NEO-THERION",
-  "date": "2026-01-08T12:00:00Z"
+  "history": [...]
 }
 ```
 
-**Best For**: Backups, sharing complete systems, version control
-
-#### 2. Conversation Logs (Auto-Parse)
-
-Simple text format for rapid rule generation.
-
+**Rule JSON:**
+```json
+{
+  "triggers": ["string"],
+  "responses": [{"weight": number, "text": "string"}],
+  "stateWeights": {"StateName": number},
+  "requiredStates": ["StateName"],
+  "chainPrompt": "string",
+  "vector": [number...]  // Auto-generated
+}
 ```
-User: what's your name?
-Assistant: I'm NeoTherion, an AI assistant.
-User: what can you do?
-Assistant: I can have conversations, answer questions, and learn.
+
+### Database Schema
+
+```javascript
+db.version(5).stores({
+  rules: '++id, *triggers, *requiredStates, chainPrompt',
+  history: '++id, role, timestamp, ruleId, vector',
+  config: 'key',
+  variables: 'key',
+  intents: '++id, label, pattern'
+});
 ```
 
-**Best For**: Converting existing chat logs, rapid prototyping
+### Vector Format
 
-#### 3. Single Rule (Quick Add)
+```javascript
+// 384-dimensional unit vector
+[
+  0.0234, -0.1234, 0.5678, ...  // 384 numbers
+]
 
-Must be wrapped in `rules` array.
+// Properties:
+// - Normalized (magnitude = 1)
+// - Float32 precision
+// - Range: typically -1 to 1
+```
+
+### State JSON Format
 
 ```json
 {
-  "rules": [
-    {
-      "triggers": ["goodbye", "bye"],
-      "responses": [{"weight": 1, "text": "Goodbye!"}],
-      "stateWeights": {"Neutral": 1},
-      "requiredStates": []
-    }
+  "key": "allStatuses",
+  "value": [
+    {"name": "Positive", "parent": null},
+    {"name": "Playful", "parent": "Positive"},
+    {"name": "Negative", "parent": null}
   ]
 }
 ```
 
-**Best For**: Adding single rules, testing
+### Intent JSON Format
 
-### Export Options
+```json
+{
+  "id": 1,
+  "label": "greeting",
+  "pattern": "#Greeting"
+}
+```
 
-**Location**: Architect Tab → Memory Control → "COPY NEURAL BACKUP"
+## A Note for Offline Purists
 
-**Toggle "Include Chat History"** to control file size. Exported JSON includes version tag for compatibility tracking.
+If you're the kind of person who wants everything running 100% locally from the very first open (no remote fetches at all), NeoTherion already makes it as easy as possible without forcing the complexity on everyone else.
 
----
+Quick smell:
+- The `/libs/` folder already contains Dexie, compromise, and marked — the app prefers them automatically.
+- The `/models/` folder contains the Xenova/all-MiniLM-L6-v2 files (config, tokenizer, quantized ONNX, etc.).
+- Transformers.js itself is loaded remotely by default (because local use requires a web server anyway due to browser fetch rules on file://).
 
-## Meshtastic LoRa AI Integration
+For the full air-gapped experience:
+1. Copy the `/libs/` and `/models/` folders as-is (they're already there).
+2. Download `transformers.min.js` from https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0/dist/transformers.min.js and place it in `/libs/`.
+3. Run the folder through a local web server (python -m http.server, npx serve, etc.) — this is required for the browser to fetch local model files.
+4. (Optional) Add `env.localModelPath = './models/Xenova/all-MiniLM-L6-v2/';` near the top of the script if you want to force the local path.
 
-**Off-Grid Intelligence**: Since the entire engine runs locally, it can act as an intelligent node on a mesh network without internet.
-
-**Response Scripting Bridge**: Execute JavaScript to:
-- Pull incoming packets from Meshtastic device
-- Process via rule-based/semantic matching
-- Push response packets back to LoRa frequency
-
-**Deployment**: Optimized for low-spec mesh node hardware (~2GB RAM).
----
-
-## Performance & Optimization
-Because NeoTherion runs entirely in the browser, efficiency is key:
-
-1.  **Vector Threading**: If you notice the "typing dots" freezing while the bot thinks, enable Vector Threading in the Architect tab.
-2.  **History Visibility**: Use the **👁 HISTORY** button in the header to hide older messages. This reduces DOM pressure during long sessions.
-3.  **Threshold Tuning**: If the bot is matching rules incorrectly, go to the **Debug Tab** and increase the **Vector Semantic Threshold** (e.g., to 0.85) to make it more strict.
+Most users will never need this — just open the file and enjoy the beast.
 
 ---
-
 ## Credits
 
 Coded on:

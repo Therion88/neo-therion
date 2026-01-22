@@ -1,96 +1,187 @@
+# NeoTherion AI Engine
+
+> **A 100% offline, browser-native AI companion with semantic matching, state machines, and scriptable responses.**
+
 ![Version](https://img.shields.io/badge/version-1.0.0-red)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Browser](https://img.shields.io/badge/browser-offline--ready-green)
-# NeoTherion
 
-**Offline-first AI engine running entirely in your browser**  
-Create adaptive chatbots, companions, text adventures, knowledge bases, automation tools — with semantic understanding, persistent memory, state machines, and zero server dependency.
+NeoTherion is a self-contained AI engine that runs entirely in your browser. No server, no API keys, no data collection — just pure client-side intelligence.
 
-![NeoTherion](https://github.com/Therion88/neo-therion/blob/main/NeoTherion.png) 
+## ✨ Features
 
-## What makes NeoTherion special?
+- 🧠 **Semantic Vector Search** - 384-dimensional embeddings via Transformers.js
+- 🎯 **Hybrid Matching** - Regex, fuzzy, and vector similarity with configurable thresholds
+- 🔄 **State Machines** - Hierarchical context management with inheritance
+- 💾 **Persistent Memory** - IndexedDB storage for rules, variables, and history
+- 🎨 **Markdown Support** - Rich text rendering in responses
+- ⚡ **Script Execution** - JavaScript in responses for dynamic behavior
+- 🌀 **Dream Mode** - RAG-seeded Markov chains for creative fallback
+- 🛠️ **Visual Rule Builder** - Full-featured Architect Center UI
+- 📦 **Standalone Mode** - Ship pre-configured bots as single HTML files
 
-- 100% offline after ~30 MB model download (all-MiniLM-L6-v2)
-- Semantic matching (384-dim embeddings) + exact regex + fuzzy fallback
-- Hierarchical state machines (mood, topic, location, persona…)
-- Smart variable injection with casing: `(User)`, `(time)`, fallbacks
-- **Dream Mode** — RAG-seeded Markov chains for creative, context-aware fallback responses
-- Full Markdown support in responses (tables, code blocks, headers…)
-- Powerful response scripting (themes, APIs, DB writes, DOM manipulation…)
-- Meshtastic/LoRa ready via scripting bridge
-- Built & tested on 2016 mobile hardware — runs great on anything newer; scripting extends for complex needs
+## 🚀 Quick Start
 
-## Quick Start (30 seconds)
+### Just open the file NeoTherion.html - works immediately
 
-1. Download or clone this repository
-2. Open **`NeoTherion.html`** in any modern browser
-3. Wait for the neural core to load (~5–20 seconds first time)
-4. Type `hello` to wake the beast
+First run downloads ~30-90MB model (one-time, cached forever).
 
-Want to build something?  
-→ Click **⚙ System Architect Center** → Core Training tab  
-→ Paste JSON rules → **PROCESS STREAM**
+## 📖 Documentation
 
-Full documentation → [NeoTherion.md](NeoTherion.md)
+See **[DOCUMENTATION.md](DOCUMENTATION.md)** for:
+- Complete feature guide
+- API reference
+- Rule creation tutorials
+- State management
+- Script execution
+- Advanced examples
 
-Try the online demo → <a href="https://therion88.github.io/neo-therion.github.io/" target="_blank">NeoTherion Live.</a>
+## 🎮 Usage
 
-## Current Status (January 2026)
+### Developer Mode
+1. Open `NeoTherion.html` in browser
+2. Click **⚙ SYSTEM ARCHITECT CENTER**
+3. Build rules using the visual editor
+4. Export brain JSON when ready
 
-This is the initial public release — fully functional and ready for use.
+### Standalone Bot Mode
+1. Paste brain JSON into `<textarea id="neo-brain">`
+2. Customize branding (title, welcome message, etc.)
+3. Distribute single HTML file
+4. Dev tools auto-hide, scripts auto-enable
 
-**Core capabilities included:**
-
-- Rule engine with vector/semantic matching
-- Hierarchical state system & variable injection
-- Dream Mode (RAG-seeded Markov chains)
-- Response scripting (UI themes, fetch APIs, DB manipulation…)
-- Export/import + bulk rule ingestion
-- 12 practical examples (beginner → expert)
-
-**Scaling & customization notes:**
-- Vector search uses centroids by default — performs well for typical use cases (dozens to several hundred rules). For very large rule sets, scripting (e.g. VP-Tree) can be used to optimize.
-- Dream Mode delivers lightweight, creative, context-guided responses — tunable and extensible via scripts.
-- Primarily English-focused (Compromise NLP), with scripting available for custom/multilingual extensions.
-
-## Folder Structure
+## 📁 Project Structure
 
 ```
-NeoTherion/
-├── NeoTherion.html           ← The single-file application (this is what you open)
-├── README.md                 ← You are here
-├── NeoTherion.md             ← Complete documentation + 12 working examples
-├── NeoTherion.png
-└── models/
-     └── Xenova/
-            └── all-MiniLM-L6-v2/
-                    ├── config.json
-                    ├── tokenizer.json
-                    ├── tokenizer_config.json
-                    ├── special_tokens_map.json
-                    └── onnx/
-                         ├── model_quantized.onnx
-                         └── model.onnx
+neo-therion/
+├── NeoTherion.html          # Single-file application
+├── libs/                    # Offline libraries (included)
+│   ├── dexie.min.js
+│   ├── compromise.min.js
+│   └── marked.min.js
+├── models/                  # AI models (auto-downloaded)
+│   └── README.md
+├── README.md               # This file
+└── DOCUMENTATION.md        # Full documentation
 ```
 
-## How to Get Started Building
+## 🔧 Requirements
 
-Three main approaches (all explained in the docs):
+**Browser Support:**
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Mobile browsers with ES2020+ support
 
-1. **Manual precision** – Build rules one by one in Core Training
-2. **Quick commit / Auto-Teach** – Let the bot dream → instantly turn dreams into rules
-3. **Mass import** – Paste JSON (hand-written, LLM-generated, or conversation logs)
+**Technical:**
+- IndexedDB
+- Web Workers
+- WebAssembly (for ONNX)
+- ~200MB RAM when active
 
-## Credits
+## 💡 Examples
 
-Developed on:
-- DW Pad6S Pro (2016 tablet, MT6755, Mali-T860, Android 8.1)
-- Using Markor (text editor) + mobile code IDE
+### Simple Greeting
+```json
+{
+  "rules": [{
+    "triggers": ["hello", "hi"],
+    "responses": [{"weight": 1, "text": "Hello! How can I help?"}],
+    "stateWeights": {"Positive": 1}
+  }]
+}
+```
 
-Built with:
-- Dexie.js • Compromise • Transformers.js • Marked.js
+### Name Capture
+```json
+{
+  "rules": [{
+    "triggers": ["my name is [user]"],
+    "responses": [{"weight": 1, "text": "Nice to meet you, **(User)**!"}],
+    "stateWeights": {"Neutral": 1}
+  }]
+}
+```
 
-**License:** MIT  
-Modify, extend, share freely — attribution appreciated but not required.
+### Theme Changer (Script)
+```json
+{
+  "rules": [{
+    "triggers": ["dark mode"],
+    "responses": [{
+      "weight": 1,
+      "text": "Switching to dark mode...\n<script>document.documentElement.style.setProperty('--bg', '#000');</script>"
+    }]
+  }]
+}
+```
 
-*“Do what thou wilt shall be the whole of the Law.”*
+**See DOCUMENTATION.md for 12+ complete working examples.**
+
+## 🎯 Use Cases
+
+- **Personal AI Companions** - Customizable digital entities
+- **Knowledge Bases** - Semantic search over documents
+- **Interactive Fiction** - Text adventures with state
+- **Chat Interfaces** - Rule-based customer support
+- **Teaching Tools** - Adaptive learning systems
+- **Prompt Prototyping** - Test AI behaviors locally
+
+## 🔒 Privacy & Security
+
+- ✅ **100% Local** - No data sent to servers
+- ✅ **Offline-First** - Works without internet after initial load
+- ✅ **Client-Side Storage** - IndexedDB stays on device
+- ✅ **Optional Scripts** - User controls code execution
+- ⚠️ **Script Warning** - Only enable for trusted content
+
+## ⚡ Performance
+
+| Metric | Value |
+|--------|-------|
+| Model Download | 30-90 MB (one-time) |
+| RAM Usage | ~200-300 MB |
+| Vector Generation | 50-100ms each |
+| IndexedDB Quota | 50-100 MB typical |
+| Max Rules (practical) | ~1000 before slowdown |
+
+## 🐛 Troubleshooting
+
+**Loader hangs?**
+- Check console for errors
+- Verify internet (first run only)
+- Try local server instead of file://
+
+**Rules not matching?**
+- Wait for "NEURAL SYNCED" indicator
+- Check Debug panel logs
+- Lower thresholds in Debug tab
+
+**Scripts not running?**
+- Enable "Executive Script Permission" in Architect tab
+
+See DOCUMENTATION.md troubleshooting section for more.
+
+## 🙏 Credits
+
+**Coded on:**
+- DW Pad6S Pro (ARM64, Android 8.1)
+- [Markor](https://github.com/gsantner/markor) - Text editor
+- [Code Editor](https://play.google.com/store/apps/details?id=com.rhmsoft.code) - IDE
+
+**Built with:**
+- [Dexie.js](https://dexie.org/) - IndexedDB wrapper
+- [Compromise](https://github.com/spencermountain/compromise) - NLP
+- [Marked](https://marked.js.org/) - Markdown parser
+- [Transformers.js](https://huggingface.co/docs/transformers.js) - ML inference
+- [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) - Embeddings
+
+## 📜 License
+
+**MIT License** - Use freely, attribution appreciated but not required.
+---
+
+> *"Do what thou wilt shall be the whole of the Law."*  
+```
+
+---
