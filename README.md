@@ -8,6 +8,8 @@
 
 NeoTherion is a self-contained AI engine that runs entirely in your browser. No server, no API keys, no data collection — just pure client-side intelligence.
 
+![NeoTherion](https://github.com/Therion88/neo-therion/blob/main/media/NeoTherion.png) 
+
 ## ✨ Features
 
 - 🧠 **Semantic Vector Search** - 384-dimensional embeddings via Transformers.js
@@ -26,9 +28,12 @@ NeoTherion is a self-contained AI engine that runs entirely in your browser. No 
 
 First run downloads ~30-90MB model (one-time, cached forever).
 
+Try the online demo → <a href="https://therion88.github.io/neo-therion.github.io/" target="_blank">NeoTherion Live.</a>
+
 ## 📖 Documentation
 
-See **[DOCUMENTATION.md](DOCUMENTATION.md)** for:
+See **[ The Full Documentation](NeoTherion.md)
+** for:
 - Complete feature guide
 - API reference
 - Rule creation tutorials
@@ -59,10 +64,17 @@ neo-therion/
 │   ├── dexie.min.js
 │   ├── compromise.min.js
 │   └── marked.min.js
-├── models/                  # AI models (auto-downloaded)
-│   └── README.md
+├── models/                 # Offline model (included)
+│    └── Xenova/
+│           └── all-MiniLM-L6-v2/
+│                   ├── config.json
+│                   ├── tokenizer.json
+│                   ├── special_tokens_map.json
+│                   └── onnx/
+│                        ├── model_quantized.onnx
+│                        └── model.onnx
 ├── README.md               # This file
-└── DOCUMENTATION.md        # Full documentation
+└── NeoTherion.md        # Full documentation
 ```
 
 ## 🔧 Requirements
