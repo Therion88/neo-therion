@@ -8,7 +8,7 @@
 
 NeoTherion is a self-contained AI engine that runs entirely in your browser. No server, no API keys, no data collection — just pure client-side intelligence.
 
-![NeoTherion](https://github.com/Therion88/neo-therion/blob/main/media/NeoTherion.png) 
+![NeoTherion](https://github.com/Therion88/neo-therion/blob/main/NeoTherion.png) 
 
 ## ✨ Features
 
